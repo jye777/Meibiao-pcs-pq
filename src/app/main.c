@@ -394,6 +394,13 @@ void software_init(void)
 	miro_write.P_rate = arm_config_data_read(ARM_P_rate);
 	miro_write.P_max = arm_config_data_read(ARM_P_max);
 	miro_write.PF_min_x100 = arm_config_data_read(ARM_PF_min_x100);
+    miro_write.Lpf_times = arm_config_data_read(ARM_Lpf_times);
+    miro_write.Freq_rate = arm_config_data_read(ARM_Freq_rate);
+	miro_write.Pfr_dbUF = arm_config_data_read(ARM_Pfr_dbUF);
+	miro_write.Pfr_kUF = arm_config_data_read(ARM_Pfr_kUF);
+    miro_write.Pfr_dbOF = arm_config_data_read(ARM_Pfr_dbOF);
+    miro_write.Pfr_kOF = arm_config_data_read(ARM_Pfr_kOF);
+    miro_write.Pfr_Tresp_ms = arm_config_data_read(ARM_Pfr_Tresp_ms);
 
 	freqProt.fpi[0].thr = arm_config_data_read(AD_OF_Thr_1);
 	freqProt.fpi[1].thr = arm_config_data_read(AD_OF_Thr_2);

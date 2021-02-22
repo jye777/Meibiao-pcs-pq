@@ -1661,6 +1661,13 @@ void fpga_data_refresh_task(const void *pdata)
         	setpara(P_rate_Addr, miro_write.P_rate);
         	setpara(P_max_Addr, miro_write.P_max);
         	setpara(PF_min_x100_Addr, miro_write.PF_min_x100);
+            setpara(Lpf_times_Addr, miro_write.Lpf_times);
+            setpara(Freq_rate_Addr, miro_write.Freq_rate); //频率额定值
+        	setpara(Pfr_dbUF_Addr, miro_write.Pfr_dbUF); //一次调频欠频死区
+        	setpara(Pfr_kUF_Addr, miro_write.Pfr_kUF); //一次调频欠频不等率
+            setpara(Pfr_dbOF_Addr, miro_write.Pfr_dbOF); //一次调频过频死区
+            setpara(Pfr_kOF_Addr, miro_write.Pfr_kOF); //一次调频过频不等率
+            setpara(Pfr_Tresp_ms_Addr, miro_write.Pfr_Tresp_ms); //一次调频响应时间（单位ms）
 			
             mb_data_update();	
 			
