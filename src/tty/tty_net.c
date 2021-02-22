@@ -1,0 +1,211 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include "cmsis_os.h"
+#include "rl_net.h"
+#include "tty_net.h"
+#include "tty.h"
+#include "telnet.h"
+
+static int telnet_recv(struct telnet_recv_inf * pinf, void *mem, int len);
+
+/*
+* 从指定TCP 连接拷贝len 字节的 数据到 mem中
+*
+*/
+int tty_telnet_getch(struct tty *ptty, char * ch )
+{
+    unsigned char ichar;
+    char temp[10];
+
+    if (telnet_recv(ptty->pnet_inf,&ichar,1))
+    {
+        return -1;
+    }
+
+    //telnet 回车为 \r\0
+    if (ichar == '\r')
+    {
+        if (telnet_recv(ptty->pnet_inf,temp,1))
+        {
+            return -1;
+        }
+    }
+
+    //telnet 选项商议
+    while (ichar == 0xff)
+    {
+        if (telnet_recv(ptty->pnet_inf,temp,2))
+        {
+            return -1;
+        }
+
+        if (telnet_recv(ptty->pnet_inf,&ichar,1))
+        {
+            return -1;
+        }
+    }
+
+    *ch = ichar;
+    //printf("icahr is %d",ichar);
+    return 0;
+}
+
+/*
+*telent打印函数
+*/
+
+#define T_PRINTF_BUF_MAX 256
+
+int tty_do_telnet_printf(struct tty *ptty ,char const *format, va_list ap)
+{
+    int sd;
+    int err;
+    int len = 0;
+    int cnt = 0;
+    char * pstr, *line;
+    char net_buf[T_PRINTF_BUF_MAX];
+
+    if (!ptty->flag)
+    {
+        return 0;
+    }
+
+    sd = *((int *)ptty->port);
+
+    len = vsnprintf(net_buf, T_PRINTF_BUF_MAX, format, ap);
+
+    if (len > -1 && len < T_PRINTF_BUF_MAX )
+    {
+        pstr = net_buf;
+        line = pstr;
+
+        while(*pstr != '\0')
+        {
+            if (*pstr == '\n')
+            {
+                if(cnt > 0)
+                {
+                	osSemaphoreWait(tty_send_sem, osWaitForever);
+                    err = send(sd, line, cnt, 0);
+					osSemaphoreRelease(tty_send_sem);
+
+                    if(err <= 0)
+                    {
+                        return 0;
+                    }
+                }
+				osSemaphoreWait(tty_send_sem, osWaitForever);
+                err = send(sd, "\r\n", 2, 0);
+				osSemaphoreRelease(tty_send_sem);
+                if(err <= 0)
+                {
+                    return 0;
+                }
+
+                cnt = 0;
+                pstr++;
+                line = pstr;
+                continue;
+            }
+
+            cnt++;
+            pstr++;
+        }
+
+        if(cnt > 0)
+        {
+			osSemaphoreWait(tty_send_sem, osWaitForever);
+            err = send(sd, line, cnt, 0);
+			osSemaphoreRelease(tty_send_sem);
+            if(err <= 0)
+            {
+                return 0;
+            }
+        }
+    }
+
+    return len;
+}
+
+int (*tty_telnet_printf[TTY_NET_NUM]) (char const *, ...) =
+{
+    tty_telnet_printf_0,
+    tty_telnet_printf_1,
+    tty_telnet_printf_2,
+};
+
+int tty_telnet_printf_0(char const *format, ...)
+{
+    int err;
+
+    va_list argptr;
+
+    va_start(argptr,format);
+
+    err = tty_do_telnet_printf(&nettty[0], format, argptr);
+
+    va_end(argptr);
+
+    return err;
+}
+
+#if TTY_NET_NUM > 1
+int tty_telnet_printf_1(char const *format, ...)
+{
+    int err;
+
+    va_list argptr;
+
+    va_start(argptr,format);
+
+    err = tty_do_telnet_printf(&nettty[1], format, argptr);
+
+    va_end(argptr);
+
+    return err;
+}
+#endif
+
+#if TTY_NET_NUM > 2
+int tty_telnet_printf_2(char const *format, ...)
+{
+    int err;
+
+    va_list argptr;
+
+    va_start(argptr,format);
+
+    err = tty_do_telnet_printf(&nettty[2], format, argptr);
+
+    va_end(argptr);
+
+    return err;
+}
+#endif
+
+static int telnet_recv(struct telnet_recv_inf * pinf,void *mem, int len)
+{
+    int num;
+    int sd;
+
+    sd = pinf->socket;
+
+    while(1)
+    {
+        num = recv(sd, mem, len, 0);
+
+        if(num == BSD_ERROR_TIMEOUT)
+        {
+            continue;
+        }
+
+        if(num != len)
+        {
+            return -1;
+        }
+
+        return 0;
+    }
+}

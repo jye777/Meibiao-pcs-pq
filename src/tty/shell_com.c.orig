@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include "tty.h"
+#include "shell.h"
+
+void shell_com_task(void const *pdata)
+{
+	struct tty *ptty;
+	int recv_rt,cmd_rt;
+	ptty = tty_get(TTY_TYPE_COM);
+    
+	ptty->printf("shell v2.0\n\n");
+	
+	while(1)	
+	{
+		ptty->printf("clou>");
+		recv_rt = tty_read_line(ptty);
+		if (recv_rt){
+			if (recv_rt == 1){
+				ptty->printf("buff 溢出");
+				continue;
+			}
+		}else{
+				cmd_rt = tty_getcmd(ptty);
+				if (cmd_rt){
+                    ptty->printf("参数数量超出限制\n");
+				}else{
+					shell_run(ptty);
+				}
+
+		}
+	}
+}
+

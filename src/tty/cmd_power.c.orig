@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "para.h"
+#include "cmd.h"
+
+int do_powerclear(struct tty *ptty)
+{
+	power_clear();
+
+	return 0;
+}
+
+cmdt cmd_powerclear = {"powerclear", do_powerclear, "清除电量信息", 
+			"powerclear\n"
+            "清除电量信息\n"};
+

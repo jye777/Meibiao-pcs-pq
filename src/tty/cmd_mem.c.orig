@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <ctype.h>
+
+#include "cmd.h"
+
+#define DISP_LINE_LEN	16
+#define MAX_LINE_LENGTH_BYTES (64)
+#define DEFAULT_LINE_LENGTH_BYTES (16)
+
+int print_buffer (struct tty *ptty, unsigned int addr, void* data, 
+            unsigned int width, unsigned int count, unsigned int linelen)
+{
+	/* linebuf as a union causes proper alignment */
+	union linebuf {
+		unsigned int ui[MAX_LINE_LENGTH_BYTES/sizeof(unsigned int) + 1];
+		unsigned short us[MAX_LINE_LENGTH_BYTES/sizeof(unsigned short) + 1];
+		unsigned char uc[MAX_LINE_LENGTH_BYTES/sizeof(unsigned char) + 1];
+	} lb;
+	int i;
+
+	if (linelen*width > MAX_LINE_LENGTH_BYTES)
+		linelen = MAX_LINE_LENGTH_BYTES / width;
+	if (linelen < 1)
+		linelen = DEFAULT_LINE_LENGTH_BYTES / width;
+
+	while (count) {
+		ptty->printf("%08lx:", addr);
+
+		/* check for overflow condition */
+		if (count < linelen)
+			linelen = count;
+
+		/* Copy from memory into linebuf and print hex values */
+		for (i = 0; i < linelen; i++) {
+			unsigned int x;
+			if (width == 4)
+				x = lb.ui[i] = *(volatile unsigned int *)data;
+			else if (width == 2)
+				x = lb.us[i] = *(volatile unsigned short *)data;
+			else
+				x = lb.uc[i] = *(volatile unsigned char *)data;
+			ptty->printf(" %0*x", width * 2, x);
+			data = (void *)((unsigned int)data + width);
+		}
+
+		/* Print data in ASCII characters */
+		for (i = 0; i < linelen * width; i++) {
+			if (!isprint(lb.uc[i]) || lb.uc[i] >= 0x80)
+				lb.uc[i] = '.';
+		}
+		lb.uc[i] = '\0';
+		ptty->printf("    %s\n", lb.uc);
+
+		/* update references */
+		addr += linelen * width;
+		count -= linelen;
+	}
+
+	return 0;
+}
+
+int do_md_size(struct tty *ptty, int size)
+{
+	unsigned int addr;
+	int len;
+
+    if(ptty->cmd_num < 2)
+	{
+		ptty->printf("错误的参数\n");
+        return 1;
+	}
+	else
+	{
+        sscanf(ptty->cmd_buf[1], "%x", &addr);
+
+        if(ptty->cmd_num > 2)
+        {
+            sscanf(ptty->cmd_buf[2], "%x", &len);
+        }
+        else
+        {
+            len = 1;
+        }
+	}
+
+    addr &= ~0x3;
+
+    if((addr >= 0x04000000 && addr <= 0x0fffffff) ||
+       (addr + size * len >= 0x04000000 && addr + size * len <= 0x0fffffff))
+	{
+		ptty->printf("\n无法访问未定义\n");
+		return 1;
+	}
+
+    print_buffer(ptty, addr, (void*)addr, size, len, DISP_LINE_LEN/size);
+
+	return 0;
+}
+
+int do_md_byte(struct tty *ptty)
+{
+    return do_md_size(ptty, 1);
+}
+
+int do_md_word(struct tty *ptty)
+{
+    return do_md_size(ptty, 2);
+}
+
+int do_md_long(struct tty *ptty)
+{
+    return do_md_size(ptty, 4);
+}
+
+cmdt cmd_md = {"md", do_md_long, "显示32位存储数据", 
+           "md addr (size)\n"
+           "显示32位存储数据，可指定读取数据数量，数量默认为1\n"};
+
+cmdt cmd_md_byte = {"md.b", do_md_byte, "显示8位存储数据", 
+           "md.b addr (size)\n"
+           "显示8位存储数据，可指定读取数据数量，数量默认为1\n"};
+
+cmdt cmd_md_word = {"md.w", do_md_word, "显示16位存储数据", 
+           "md.w addr (size)\n"
+           "显示16位存储数据，可指定读取数据数量，数量默认为1\n"};
+
+cmdt cmd_md_long = {"md.l", do_md_long, "显示32位存储数据", 
+           "md.l addr (size)\n"
+           "显示32位存储数据，可指定读取数据数量，数量默认为1\n"};
+

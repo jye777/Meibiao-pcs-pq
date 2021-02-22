@@ -1,0 +1,295 @@
+#include <stdio.h>
+#include <string.h>
+#include "cmsis_os.h"
+#include "rl_net.h"
+#include "env.h"
+//#include "filesystem.h"
+#include "cmd.h"
+#include "MBServer.h"
+#include "epcs.h"
+
+enum pro_type
+{
+    PRO_TYPE_BOOT = 1,
+    PRO_TYPE_MAIN
+};
+
+extern uint8_t tftp_end;
+extern uint8_t printf_tftp_err(void);
+extern int fs_get_md5_string(const char *filename, char md5_string[33]);
+extern void tftp_getfile_start(NET_ADDR4 *addr, char *filename, char *lfn);
+extern int fs_get_md5(const char *filename, uint8_t md5[16]);
+static netTFTPc_Event tftp_event;
+extern void save_sdata(void);
+
+static void tftp_print_err_string(struct tty *ptty)
+{
+    switch(tftp_event)
+    {
+    case netTFTPc_EventSuccess:
+        // File operation successful
+        ptty->printf("下载成功\n");
+        break;
+    case netTFTPc_EventTimeout:
+        // Timeout on file operation
+        ptty->printf("操作超时\n");
+        break;
+    case netTFTPc_EventAccessDenied:
+        // File access not allowed
+        ptty->printf("无访问权限\n");
+        break;
+    case netTFTPc_EventFileNotFound:
+        // File not found
+        ptty->printf("未找到文件\n");
+        break;
+    case netTFTPc_EventDiskFull:
+        // Disk full
+        ptty->printf("存储器空间不足\n");
+        break;
+    case netTFTPc_EventLocalFileError:
+        // Local file write error
+        ptty->printf("文件写入失败\n");
+        break;
+    case netTFTPc_EventError:
+        // Generic TFTP client error
+        ptty->printf("TFTP下载失败\n");
+        break;
+    }
+}
+
+osThreadId tid_mainfirmware_check;
+void mainfirmware_check_task(const void* pdata);
+osThreadDef(mainfirmware_check_task, osPriorityAboveNormal, 1, 0);
+static uint8_t ffc_done = 0;
+struct tty *ffc_ptty;
+static char *mainname;
+static void mainfirmware_check_task(const void *pdata)
+{
+    char md5_str[33];
+    ffc_done = 0;
+    if(fs_get_md5_string(mainname, md5_str))
+    {
+        ffc_ptty->printf("计算MD5码失败\n");
+        ffc_done = 2;
+        return ;
+    }
+
+    ffc_ptty->printf("MD5: %s\n", md5_str);
+    setenv("main_cur_md5", md5_str);
+    setenv("main_update", "1");
+
+    if(saveenv())
+    {
+        ffc_ptty->printf("MD5存储错误\n");
+    }
+		save_sdata();
+    ffc_done = 4;
+    osThreadTerminate(tid_mainfirmware_check);//POF_LOAD
+
+    while(1)
+    {
+        osDelay(1);
+    }
+}
+
+osThreadId tid_fpgafirmware_check;
+void fpgafirmware_check_task(const void* pdata);
+osThreadDef(fpgafirmware_check_task, osPriorityNormal, 1, 0);
+struct tty *ffc_ptty;
+static void fpgafirmware_check_task(const void *pdata)
+{
+    char md5_str_nand[33],md5_str_fpga[16],md5_str[33];
+    firmware_check_delthreah();
+    if(fs_get_md5_string("fpga_cur.pof", md5_str_nand))
+    {
+        ffc_ptty->printf("计算MD5码失败\n");
+        ffc_done = 2;
+        return;
+    }
+    ffc_ptty->printf("nand MD5: %s\n", md5_str_nand);
+
+    epcs_get_md5(0, (uint8_t *)md5_str_fpga);
+    epcs_close();
+
+    for(char i = 0; i < 16; i++)
+    {
+        snprintf(&md5_str[i * 2], 3, "%02x", md5_str_fpga[i]);
+    }
+
+    md5_str[32] = '\0';
+    ffc_ptty->printf("edcp MD5: %s\n", md5_str);
+
+    if(strcmp(md5_str_nand,md5_str))
+    {
+        ffc_ptty->printf("MD5校验失败\n");
+        ffc_done = 3;
+        return ;
+    }
+
+    setenv("fpga_cur_md5", md5_str);
+    if(saveenv())
+    {
+        ffc_ptty->printf("MD5存储错误\n");
+    }
+    ffc_done = 4;
+    firmware_check_createthreah();
+    osThreadTerminate(tid_fpgafirmware_check);//POF_LOAD
+
+    while(1)
+    {
+        osDelay(1);
+    }
+}
+
+int do_tftp(struct tty *ptty)
+{
+    char *stype, *filename, *lfn, *srvip = NULL;
+    NET_ADDR4 addr;
+    uint8_t srvaddr[NET_ADDR_IP4_LEN];
+    uint8_t type;
+    //char md5_str[33];
+
+    if(ptty->cmd_num < 3)
+    {
+        ptty->printf("输入参数错误\n");
+        return 0;
+    }
+
+    stype = ptty->cmd_buf[1];
+
+    /* Only support the main program now! */
+    if(strcmp(stype, "main") == 0)
+    {
+        lfn = "main_cur.bin";
+        mainname = lfn;
+        type = 2;
+        ptty->printf("正在下载主程序\n");
+    }
+    else if(strcmp(stype,"fpga") == 0)
+    {
+        lfn = "fpga_cur.pof";
+        type = 3;
+        ptty->printf("正在下载主程序\n");
+    }
+    else
+    {
+        ptty->printf("不支持的程序类型\n");
+        return 0;
+    }
+
+    if(ptty->cmd_num > 3)
+    {
+        srvip = ptty->cmd_buf[3];
+    }
+    else
+    {
+        srvip = getenv("serverip");
+    }
+
+    if(srvip == NULL)
+    {
+        ptty->printf("未配置服务器IP\n");
+        return 0;
+    }
+
+    netIP_aton (srvip, NET_ADDR_IP4, &srvaddr[0]);
+
+    filename = ptty->cmd_buf[2];
+    addr.addr_type = NET_ADDR_IP4;
+    addr.port = 0;
+    memcpy(addr.addr, srvaddr, sizeof(srvaddr));
+
+    tftp_getfile_start((NET_ADDR4 *)&addr, filename, lfn);
+
+    while(!tftp_end)
+    {
+        osDelay(100);
+    }
+
+    if(printf_tftp_err() != 12)
+    {
+        return 0;
+    }
+
+    if(tftp_event != netTFTPc_EventSuccess)
+    {
+        return 0;
+    }
+
+    if(type == 2)
+    {
+        ffc_ptty = ptty;
+        ffc_done = 0;
+        tid_mainfirmware_check = osThreadCreate(osThread(mainfirmware_check_task), NULL);
+        if(tid_mainfirmware_check == NULL)
+        {
+            ptty->printf("启动校验失败\n");
+            ffc_done = 1;
+        }
+        else
+        {
+            ptty->printf("开始校验\n");
+        }
+    }
+    else if(type == 3)
+    {
+        ffc_ptty = ptty;
+        ffc_done = 0;
+        tid_fpgafirmware_check = osThreadCreate(osThread(fpgafirmware_check_task), NULL);
+
+        if(tid_fpgafirmware_check == NULL)
+        {
+            ptty->printf("启动校验失败\n");
+            ffc_done = 1;
+        }
+        else
+        {
+            ptty->printf("开始校验\n");
+        }
+        //				firmware_check_delthreah();
+//				if(fs_get_md5_string(lfn, md5_str_nand))
+//				{
+//						ptty->printf("计算MD5码失败\n");
+//						return 0;
+//				}
+//				ptty->printf("nand MD5: %s\n", md5_str_nand);
+//
+//        epcs_get_md5(0, (uint8_t *)md5_str_fpga);
+//        epcs_close();
+//
+//				for(char i = 0; i < 16; i++)
+//				{
+//						snprintf(&md5_str[i * 2], 3, "%02x", md5_str_fpga[i]);
+//				}
+
+//				md5_str[32] = '\0';
+//				ptty->printf("edcp MD5: %s\n", md5_str);
+//
+//				if(strcmp(md5_str_nand,md5_str))
+//				{
+//						ptty->printf("MD5校验失败\n");
+//						return 0;
+//				}
+//
+//				setenv("fpga_cur_md5", md5_str);
+//				if(saveenv())
+//				{
+//						ptty->printf("MD5存储错误\n");
+//				}
+//				firmware_check_createthreah();
+    }
+    while(ffc_done == 0)
+    {
+        osDelay(100);
+    }
+//    firmware_version_update(type,md5_str);
+
+    ptty->printf("请复位以完成更新\n");
+
+    return 0;
+}
+
+cmdt cmd_tftp = {"tftp", do_tftp, "通过TFTP更新固件",
+                 "tftp main filename [serverip]\n更新主程序\n"
+                };
+

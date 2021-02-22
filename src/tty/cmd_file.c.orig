@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <string.h>
+
+#include "cmsis_os.h"
+#include "env.h"
+#include "nand_file.h"
+#include "cmd.h"
+
+static int check_user_confirm(struct tty *ptty)
+{
+    char buf[5];
+
+    tty_getstring(ptty, buf, sizeof(buf));
+
+    if(strcmp(buf, "y") && strcmp(buf, "Y"))
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
+//int do_ls(struct tty *ptty)
+//{
+//    fsFileInfo info;
+//    info.fileID = 0;
+//    // info.fileID must be set to 0
+//    while(ffind("*.*", &info) == fsOK)
+//    {
+//        // find whatever is in drive "N0:"
+//        ptty->printf("\n%-32s %5d bytes, ID: %04d",
+//                     info.name,
+//                     info.size,
+//                     info.fileID);
+//    }
+
+//    ptty->printf("\n");
+
+//    return 0;
+//}
+
+int do_format(struct tty *ptty)
+{
+    int i, sn;
+    char opt[20] = "/W /LL";
+
+    ptty->printf("确定格式化文件系统?(y/N)\n");
+
+    if(!check_user_confirm(ptty))
+    {
+        ptty->printf("操作被取消\n");
+        return 0;
+    }
+
+    ptty->printf("正在格式化...\n");
+
+    if(ptty->cmd_num > 1)
+    {
+        memset(opt, 0, sizeof(opt));
+    }
+
+    sn = 0;
+
+    for(i = 1; i < ptty->cmd_num; i++)
+    {
+        if(sn + 2 + strlen(ptty->cmd_buf[i]) > sizeof(opt))
+        {
+            break;
+        }
+
+        strcat(opt, " ");
+        strcat(opt, ptty->cmd_buf[i]);
+    }
+
+    ptty->printf("格式化选项: %s\n", opt);
+
+		format();
+    ptty->printf("格式化完成\n");
+
+    ptty->printf("\n");
+
+    return 0;
+}
+
+//int do_del(struct tty *ptty)
+//{
+//    fsStatus stat;
+//    fsFileInfo info;
+//    char *fn;
+
+//    if(ptty->cmd_num < 2)
+//    {
+//        ptty->printf("输入参数错误\n");
+//        return 0;
+//    }
+
+//    fn = ptty->cmd_buf[1];
+
+//    ptty->printf("确定删除文件%s?(y/N)\n", fn);
+
+//    if(!check_user_confirm(ptty))
+//    {
+//        ptty->printf("操作被取消\n");
+//        return 0;
+//    }
+
+//    info.fileID = 0;
+
+//    // info.fileID must be set to 0
+//    while(ffind(fn, &info) == fsOK)
+//    {
+//        // find whatever is in drive "N0:"
+//        stat = fdelete(info.name, NULL);
+//        if(stat == fsOK)
+//        {
+//            ptty->printf("已成功删除文件%s\n", info.name);
+//        }
+//        else
+//        {
+//            ptty->printf("删除文件%s失败:%d\n", info.name, (int)stat);
+//        }
+//    }
+
+//    ptty->printf("\n");
+
+//    return 0;
+//}
+
+//int do_fsinfo(struct tty *ptty)
+//{
+//    fsStatus s;
+//    fsDriveInfo info;
+
+//    s = finfo("N0:", &info);
+
+//    if(s != fsOK)
+//    {
+//        ptty->printf("get fs info failed: %d\n", s);
+//        return 0;
+//    }
+
+//    if(info.fs_type == fsTypeFAT12)
+//    {
+//        ptty->printf("FSType: FAT12\n");
+//    }
+//    else if(info.fs_type == fsTypeFAT16)
+//    {
+//        ptty->printf("FSType: FAT16\n");
+//    }
+//    else if(info.fs_type == fsTypeFAT32)
+//    {
+//        ptty->printf("FSType: FAT32\n");
+//    }
+//    else if(info.fs_type == fsTypeEFS)
+//    {
+//        ptty->printf("FSType: EFS\n");
+//    }
+//    else if(info.fs_type == fsTypeNone)
+//    {
+//        ptty->printf("FSType: None\n");
+//    }
+//    else
+//    {
+//        ptty->printf("FSType: Unknown\n");
+//    }
+
+//    ptty->printf("Capacity: %dBytes\n", (uint32_t)info.capacity);
+//    ptty->printf("Free: %dBytes\n", (int32_t)ffree("N0:"));
+
+//    return 0;
+//}
+
+//cmdt cmd_ls = {"ls", do_ls, "显示当前目录文件",
+//               "ls\n显示当前目录文件\n"
+//              };
+
+cmdt cmd_format = {"format", do_format, "格式文件系统",
+                   "format\n格式化文件系统\n"
+                  };
+
+//cmdt cmd_del = {"del", do_del, "删除文件",
+//                "del\n删除文件\n"
+//               };
+
+//cmdt cmd_fsinfo = {"fsinfo", do_fsinfo, "显示文件系统信息",
+//                   "fsinfo\n显示文件系统信息\n"
+//                  };
+

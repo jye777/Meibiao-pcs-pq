@@ -1,0 +1,28 @@
+#include "cmsis_os.h"
+#include "rl_net.h"
+#include "cmd.h"
+
+static uint8_t ip4_addr[NET_ADDR_IP4_LEN];
+
+
+//显示服务器连接信息
+int do_showconn(struct tty *ptty)
+{
+    ptty->printf("\n");
+
+    netIF_GetOption (NET_IF_CLASS_ETH | 0, netIF_OptionIP4_Address, ip4_addr, sizeof (ip4_addr));
+    ptty->printf("local ip:%d.%d.%d.%d\n", ip4_addr[0], ip4_addr[1], ip4_addr[2], ip4_addr[3]);
+
+    netIF_GetOption (NET_IF_CLASS_ETH | 0, netIF_OptionIP4_SubnetMask, ip4_addr, sizeof (ip4_addr));
+    ptty->printf("netmask:%d.%d.%d.%d\n", ip4_addr[0], ip4_addr[1], ip4_addr[2], ip4_addr[3]);
+
+    netIF_GetOption (NET_IF_CLASS_ETH | 0, netIF_OptionIP4_DefaultGateway, ip4_addr, sizeof (ip4_addr));
+    ptty->printf("gateway ip:%d.%d.%d.%d\n", ip4_addr[0], ip4_addr[1], ip4_addr[2], ip4_addr[3]);
+
+    return 0;
+}
+
+cmdt cmd_showconn = {"showconn", do_showconn, "显示网络状态",
+                     "showconn\n"
+                     "显示网络状态\n"
+                    };

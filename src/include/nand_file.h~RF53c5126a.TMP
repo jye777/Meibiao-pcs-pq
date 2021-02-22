@@ -1,0 +1,15 @@
+#ifndef NAND_FILE_H
+#define NAND_FILE_H
+
+#include "nand.h"
+#include "cmsis_os.h"
+
+extern osSemaphoreId nand_sem;
+
+extern FILE_STRUCT *getfileaddr(char *name);
+void get_last_file(char *name1,FILE_STRUCT *f);
+extern void nand_file_int(void);
+extern int fs_get_md5(const char *filename, uint8_t md5[16]);
+extern void write_file(FILE_STRUCT *f,uint8_t *buf,uint32_t offset,uint32_t len);
+extern void read_file(FILE_STRUCT *f,uint8_t *buf,uint32_t offset,uint32_t len);
+#endif

@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "cmd.h"
+#include "cmsis_os.h"
+#include "stm32f4xx_hal.h"
+#include "log.h"
+#include "fpga.h"
+#include "MBServer.h"
+#include "modbus_master.h"
+#include "para.h"
+#include "micro.h"
+#include "custom.h"
+#include "net_ems.h"
+#include "sdata_alloc.h"
+
+extern unsigned int rtwq_tail;
+extern volatile unsigned int rw_int;
+
+int do_wave(struct tty *ptty)
+{
+    ptty->printf("%d\n", rtwq_tail);
+
+    return 0;
+}
+
+int do_test(struct tty *ptty)
+{
+    unsigned short data, rdata;
+    int addr;
+
+    sscanf(ptty->cmd_buf[1], "%x", &addr);
+    sscanf(ptty->cmd_buf[2], "%hx", &data);
+
+    rdata = fpga_read(Addr_Param113);
+    setpara(Addr_Param113,rdata);
+    fpga_write(addr,data);
+    setpara(Addr_Param113,rdata);
+    rdata = fpga_read(addr);
+    ptty->printf("fpga[0x%x] = 0x%x\n", addr, (uint32_t)rdata);
+
+    return 0;
+}
+
+cmdt cmd_test = {"test", do_test, "测试",
+                 "test +:charge -:discharge\n"
+                 "内部测试 +:充电 -:放电\n"
+                };
+

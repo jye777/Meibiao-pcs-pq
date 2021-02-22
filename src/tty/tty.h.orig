@@ -1,0 +1,101 @@
+#ifndef _TTY_H
+#define _TTY_H
+
+#include "tty_net.h"
+
+#define TTY_BUF_SIZE	100
+#define TTY_CMD_NUM	10
+#define TTY_CMD_SIZE      25
+
+#define TTY_TYPE_IDLE	0
+#define TTY_TYPE_COM	1
+#define TTY_TYPE_NET	2
+
+#define TTY_NET_NUM 3
+#define TTY_COM_NUM 1
+
+#define isblank(c)	(c == ' ' || c == '\t')
+
+//开启行编辑
+#define CONFIG_CMDLINE_EDITING
+
+#define HIST_MAX		20
+#define HIST_SIZE		TTY_BUF_SIZE
+
+#define ctrlc()       tty_check_char(ptty, 3)
+
+#if 0
+#define	suk_printf(fmt...)	tty_printf(fmt)
+#else
+#define suk_printf(fmt...)
+#endif
+
+
+//struct telnet_recv_inf;
+struct tty_cmdline_edit
+{
+    
+	int hist_max;
+	int hist_add_idx;
+	int hist_cur;
+	unsigned hist_num;
+	char* hist_list[HIST_MAX];
+    char hist_lines[HIST_MAX][HIST_SIZE + 1];
+};
+
+struct tty
+{
+    /* TTY类型 0:空闲 1: 串口 2:网络 FF:紧急处理 */
+	unsigned char type;
+
+    /* 接收buff */
+	char  recv_buf[TTY_BUF_SIZE];
+
+    /* 命令buff */
+	char *cmd_buf[TTY_CMD_NUM];
+
+    /* 命令个数 */
+	int cmd_num;
+
+    /* 接收函数 */
+	int (*getc)(struct tty*, char *);
+
+    /* 打印函数 */
+	int (*printf)(char const * ,...);
+
+    /* 接口指针 */
+	void * port;
+
+    /* 发送使能标志 */
+	char  flag;
+
+    #ifdef CONFIG_CMDLINE_EDITING 
+
+    /* 行编辑所需结构体 */
+    struct tty_cmdline_edit cmdline;
+
+    /* 模拟套接字 */
+    struct telnet_recv_inf *pnet_inf;
+    
+    #endif
+};
+
+#if TTY_NET_NUM != 0
+extern struct tty nettty[TTY_NET_NUM];
+#endif
+
+#if TTY_COM_NUM != 0
+extern struct tty comtty[TTY_COM_NUM];
+#endif
+
+int tty_read_line(struct tty * ptty);
+int  tty_getcmd(struct tty *ptty);
+void tty_deloneline(struct tty *ptty);
+int tty_getonechar(struct tty *ptty, char *c);
+int tty_getstring(struct tty *ptty, char *buf, int buflen);
+struct tty * tty_get(unsigned char type);
+unsigned char tty_free(struct tty *ptty);
+int tty_printf(const char * format, ...);
+int tty_check_char(struct tty *ptty, int ch);
+
+#endif

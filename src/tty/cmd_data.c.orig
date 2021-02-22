@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "cmd.h"
+#include "cmsis_os.h"
+#include "modbus_master.h"
+
+int do_meter(struct tty *ptty)
+{
+    int idx;
+    meter_data_t *meter_data;
+    
+    if(ptty->cmd_num < 2)
+    {
+        ptty->printf("必须指定电能表序号\n");
+        return 0;
+    }
+
+    idx = atoi(ptty->cmd_buf[1]);
+
+    switch(idx)
+    {
+    case 0:
+        meter_data = &meter0_data;
+        break;
+    case 1:
+        meter_data = &meter1_data;
+        break;
+    default:
+        ptty->printf("错误的序号\n");
+        return 0;
+    }
+    
+    ptty->printf("Ia: %.3f\n", meter_data->Ia);
+    ptty->printf("Ib: %.3f\n", meter_data->Ib);
+    ptty->printf("Ic: %.3f\n", meter_data->Ic);
+    ptty->printf("Ua: %.1f\n", meter_data->Ua);
+    ptty->printf("Ub: %.1f\n", meter_data->Ub);
+    ptty->printf("Uc: %.1f\n", meter_data->Uc);
+    ptty->printf("P: %.1f\n", meter_data->P);
+    ptty->printf("Q: %.1f\n", meter_data->Q);
+    ptty->printf("S: %.1f\n", meter_data->S);
+    ptty->printf("pos_act_pow: %d\n", meter_data->pos_act_pow);
+    ptty->printf("rev_act_pow: %d\n", meter_data->rev_act_pow);
+    ptty->printf("pos_rea_pow: %d\n", meter_data->pos_rea_pow);
+    ptty->printf("rev_rea_pow: %d\n", meter_data->rev_rea_pow);
+    
+    return 0;
+}
+
+cmdt cmd_meter = {"meter", do_meter, "显示电能表数据", 
+            "meter idx\n"
+            "显示指定电能表数据(idx = 0, 1)\n"};
+

@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <string.h>
+
+#include "cmd.h"
+#include "env.h"
+
+
+int do_printenv(struct tty *ptty)
+{
+	char *v = (char *)&env_cache->data[0];
+    
+	while(*v != '\0' || *(v+1) != '\0')
+	{
+		if(*v != '\0')
+		{
+			ptty->printf("%c", *v);
+		}
+		else
+		{
+			ptty->printf("\n");
+		}
+        
+		v++;
+	}
+    
+	ptty->printf("\n");
+
+	return 0;
+}
+
+int do_setenv(struct tty *ptty)
+{
+    int err = 0;
+
+    char *envname, *value;
+
+    if(ptty->cmd_num < 2)
+    {
+        ptty->printf("参数输入错误\n");
+    }
+
+    envname = ptty->cmd_buf[1];
+
+    if(ptty->cmd_num > 2)
+    {
+        value = ptty->cmd_buf[2];
+    }
+    else
+    {
+        value = "";
+    }
+
+    err = setenv(envname, value);
+
+    if(err)
+    {
+        ptty->printf("设置环境变量失败\n");
+    }
+    else
+    {
+        ptty->printf("环境变量已设置到缓存中\n");
+    }
+    
+	return 0;
+}
+
+int do_saveenv(struct tty *ptty)
+{
+    int err = 0;
+
+    err = saveenv();
+
+    if(err)
+    {
+        ptty->printf("环境变量保存失败\n");
+    }
+    else
+    {
+        ptty->printf("环境变量已保存\n");
+    }
+    
+	return 0;
+}
+
+int do_clearenv(struct tty *ptty)
+{
+		memset(env_cache->data,0,ENV_MAXSIZE);
+		env_crc_update();
+		saveenv();
+		return 0;
+}
+
+cmdt cmd_printenv = {"printenv", do_printenv, "显示环境变量",
+                "printenv\n"
+                "显示环境变量\n"};
+
+cmdt cmd_setenv = {"setenv", do_setenv, "设置环境变量",
+                "setenv\n"
+                "设置环境变量\n"};
+
+cmdt cmd_saveenv = {"saveenv", do_saveenv, "保存环境变量",
+                "saveenv\n"
+                "保存环境变量\n"};
+cmdt cmd_clearenv = {"clearenv", do_clearenv, "清空环境变量",
+								"clearenv\n"
+								"清空环境变量\n"};
