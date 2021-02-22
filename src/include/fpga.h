@@ -10,7 +10,7 @@
 #define MODULUS					(10)
 #define SOFT_VER_V				(3)
 #define SOFT_VER_C				(1)
-#define SOFT_VER_B				(31)   
+#define SOFT_VER_B				(32)   
 #define SOFT_VER				((SOFT_VER_V<<12) + (SOFT_VER_C<<8) + SOFT_VER_B)
 #define DEVICE_NO				((DEV_TYPE<<12) + (PCS_POWER_LEVEL))
 #define SOFT_VER1				((SOFT_VER_V*1000) + (SOFT_VER_C*100) + SOFT_VER_B)

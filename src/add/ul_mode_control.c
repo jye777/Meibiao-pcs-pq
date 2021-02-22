@@ -943,7 +943,6 @@ extern short setting_data_handle(short addr, short value);
 
 ul_mode_opt_t umo;
 
-#define UNIT_PU	8192
 #define UM_TASK_PERIOD 5
 
 enum
@@ -991,42 +990,41 @@ static void ul_input_vars_update(ul_mode_opt_t *pUmo)
     pul_U->q_cmd = pUmo->qCmd;
     
     if(GETBIT(pul_U->ul_mode, UL_MODE_CONST_PF) == 1) { //UL_MODE_CONST_PF
-        pul_U->p_rate = setting_data_handle(Addr_Param26, pMs->P_rate * 10);
-        pul_U->p_max = (int16_t)(pMs->P_max * UNIT_PU / 100);
-        pul_U->cosPhi = (int16_t)(pMs->PF_x100 * UNIT_PU / 100);
-        pul_U->cosMin = (int16_t)(pMs->PF_min_x100 * UNIT_PU / 100);
+        pul_U->p_rate = pMs->P_rate;
+        pul_U->p_max = pMs->P_max;
+        pul_U->cosPhi = pMs->PF_x100;
+        pul_U->cosMin = pMs->PF_min_x100;
         printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
-        printf_debug8("---p_rate[%d] p_max[%d] cosPhi[%d] cosMin[%d]\n", pul_U->p_rate, pul_U->p_max, pul_U->cosPhi, 
-pul_U->cosMin);
+        printf_debug8("---p_rate[%d] p_max[%d] cosPhi[%d] cosMin[%d]\n", pul_U->p_rate, pul_U->p_max, pul_U->cosPhi, pul_U->cosMin);
     } else if(GETBIT(pul_U->ul_mode, UL_MODE_VQ) == 1) { //UL_MODE_VQ
 		pul_U->uac_now = (int16_t)((fpga_pdatabuf_get[Addr_Param256] + fpga_pdatabuf_get[Addr_Param257] + fpga_pdatabuf_get[Addr_Param258]) / 3.0f);
-		pul_U->uac_rate = setting_data_handle(Addr_Param256, pMs->Uac_rate * 10);
-		pul_U->p_rate = setting_data_handle(Addr_Param26, pMs->P_rate * 10);
-		pul_U->p_max = (int16_t)(pMs->P_max * UNIT_PU / 100);
-		pul_U->m2V1 = (int16_t)(pMs->VQ_V1 * UNIT_PU / 100);
-		pul_U->m2V2 = (int16_t)(pMs->VQ_V2 * UNIT_PU / 100);
-		pul_U->m2V3 = (int16_t)(pMs->VQ_V3 * UNIT_PU / 100);
-		pul_U->m2V4 = (int16_t)(pMs->VQ_V4 * UNIT_PU / 100);
-		pul_U->m2Q1 = (int16_t)(pMs->VQ_Q1 * UNIT_PU / 100);
-		pul_U->m2Q2 = (int16_t)(pMs->VQ_Q2 * UNIT_PU / 100);
-		pul_U->m2Q3 = (int16_t)(pMs->VQ_Q3 * UNIT_PU / 100);
-		pul_U->m2Q4 = (int16_t)(pMs->VQ_Q4 * UNIT_PU / 100);
+		pul_U->uac_rate = pMs->Uac_rate;
+		pul_U->p_rate = pMs->P_rate;
+		pul_U->p_max = pMs->P_max;
+		pul_U->m2V1 = pMs->VQ_V1;
+		pul_U->m2V2 = pMs->VQ_V2;
+		pul_U->m2V3 = pMs->VQ_V3;
+		pul_U->m2V4 = pMs->VQ_V4;
+		pul_U->m2Q1 = pMs->VQ_Q1;
+		pul_U->m2Q2 = pMs->VQ_Q2;
+		pul_U->m2Q3 = pMs->VQ_Q3;
+		pul_U->m2Q4 = pMs->VQ_Q4;
         printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
 		printf_debug8("---uac_now[%d] uac_rate[%d] p_rate[%d] p_max[%d]\n", pul_U->uac_now, pul_U->uac_rate, pul_U->p_rate, 
 pul_U->p_max);
-		printf_debug8("---v1-v4[%d][%d][%d][%d]\n", pul_U->m2V1, pul_U->m2V2, pul_U->m2V3, pul_U->m2V4);
+	    printf_debug8("---v1-v4[%d][%d][%d][%d]\n", pul_U->m2V1, pul_U->m2V2, pul_U->m2V3, pul_U->m2V4);
 		printf_debug8("---q1-q4[%d][%d][%d][%d]\n", pul_U->m2Q1, pul_U->m2Q2, pul_U->m2Q3, pul_U->m2Q4);
     } else if(GETBIT(pul_U->ul_mode, UL_MODE_PQ) == 1) { //UL_MODE_PQ
-		pul_U->p_rate = setting_data_handle(Addr_Param26, pMs->P_rate * 10);
-		pul_U->p_max = (int16_t)(pMs->P_max * UNIT_PU / 100);
-		pul_U->P3neg = (int16_t)(pMs->PQ_n_P3 * UNIT_PU / 100);
-		pul_U->P2neg = (int16_t)(pMs->PQ_n_P2 * UNIT_PU / 100);
-		pul_U->P2pos = (int16_t)(pMs->PQ_p_P2 * UNIT_PU / 100);
-		pul_U->P3pos = (int16_t)(pMs->PQ_p_P3 * UNIT_PU / 100);
-		pul_U->Q3neg = (int16_t)(pMs->PQ_n_Q3 * UNIT_PU / 100);
-		pul_U->Q2neg = (int16_t)(pMs->PQ_n_Q2 * UNIT_PU / 100);
-		pul_U->Q2pos = (int16_t)(pMs->PQ_p_Q2 * UNIT_PU / 100);
-		pul_U->Q3pos = (int16_t)(pMs->PQ_p_Q3 * UNIT_PU / 100);
+		pul_U->p_rate = pMs->P_rate;
+		pul_U->p_max = pMs->P_max;
+		pul_U->P3neg = pMs->PQ_n_P3;
+		pul_U->P2neg = pMs->PQ_n_P2;
+		pul_U->P2pos = pMs->PQ_p_P2;
+		pul_U->P3pos = pMs->PQ_p_P3;
+		pul_U->Q3neg = pMs->PQ_n_Q3;
+		pul_U->Q2neg = pMs->PQ_n_Q2;
+		pul_U->Q2pos = pMs->PQ_p_Q2;
+		pul_U->Q3pos = pMs->PQ_p_Q3;
         printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
 		printf_debug8("---p_rate[%d] p_max[%d]\n", pul_U->p_rate, pul_U->p_max);
 		printf_debug8("---pn32pp23[%d][%d][%d][%d]\n", pul_U->P3neg, pul_U->P2neg, pul_U->P2pos, pul_U->P3pos);
@@ -1035,23 +1033,23 @@ pul_U->p_max);
         printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
     } else if(GETBIT(pul_U->ul_mode, UL_MODE_VP) == 1) { //UL_MODE_VP
 		pul_U->uac_now = (int16_t)((fpga_pdatabuf_get[Addr_Param256] + fpga_pdatabuf_get[Addr_Param257] + fpga_pdatabuf_get[Addr_Param258]) / 3.0f);
-		pul_U->uac_rate = setting_data_handle(Addr_Param256, pMs->Uac_rate * 10);
-		pul_U->p_rate = setting_data_handle(Addr_Param26, pMs->P_rate * 10);
-		pul_U->p_max = (int16_t)(pMs->P_max * UNIT_PU / 100);
-		pul_U->m3V1 = (int16_t)(pMs->VP_V1 * UNIT_PU / 100);
-		pul_U->m3V2 = (int16_t)(pMs->VP_V2 * UNIT_PU / 100);
-		pul_U->m3P1 = (int16_t)(pMs->VP_P1 * UNIT_PU / 100);
-		pul_U->m3P2 = (int16_t)(pMs->VP_P2 * UNIT_PU / 100);
+		pul_U->uac_rate = pMs->Uac_rate;
+		pul_U->p_rate = pMs->P_rate;
+		pul_U->p_max = pMs->P_max;
+		pul_U->m3V1 = pMs->VP_V1;
+		pul_U->m3V2 = pMs->VP_V2;
+		pul_U->m3P1 = pMs->VP_P1;
+		pul_U->m3P2 = pMs->VP_P2;
         printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
         printf_debug8("---uac_now[%d] uac_rate[%d] p_rate[%d] p_max[%d]\n", pul_U->uac_now, pul_U->uac_rate, pul_U->p_rate, pul_U->p_max);
 		printf_debug8("---v12p12[%d][%d][%d][%d]\n", pul_U->m3V1, pul_U->m3V2, pul_U->m3P1, pul_U->m3P2);
     } else if(GETBIT(pul_U->ul_mode, UL_MODE_PFR) == 1) {
         pul_U->f_now = fpga_pdatabuf_get[Addr_Param271];
-		pul_U->f_rate = setting_data_handle(Addr_Param271, pMs->Freq_rate * 10);
-        pul_U->pfr_dbUF = setting_data_handle(Addr_Param271, pMs->Pfr_dbUF * 10);
-        pul_U->pfr_kUF = (int16_t)(pMs->Pfr_kUF * UNIT_PU / 100);
-        pul_U->pfr_dbOF = setting_data_handle(Addr_Param271, pMs->Pfr_dbOF * 10);
-        pul_U->pfr_kOF = (int16_t)(pMs->Pfr_kOF * UNIT_PU / 100);
+		pul_U->f_rate = pMs->Freq_rate;
+        pul_U->pfr_dbUF = pMs->Pfr_dbUF;
+        pul_U->pfr_kUF = pMs->Pfr_kUF;
+        pul_U->pfr_dbOF = pMs->Pfr_dbOF;
+        pul_U->pfr_kOF = pMs->Pfr_kOF;
         pul_U->pfr_upLmt = fpga_pdatabuf_get[Addr_Param30];
         pul_U->pfr_lwLmt = fpga_pdatabuf_get[Addr_Param29];
         pul_U->pfr_Tresp_ms = pMs->Pfr_Tresp_ms;
@@ -1061,7 +1059,7 @@ pul_U->p_max);
         printf_debug8("---pfr_dbUF[%d] pfr_kUF[%d] pfr_dbOF[%d] pfr_kOF[%d]\n", pul_U->pfr_dbUF, pul_U->pfr_kUF, pul_U->pfr_dbOF, pul_U->pfr_kOF);
         printf_debug8("---pfr_upLmt[%d] pfr_lwLmt[%d]\n", pul_U->pfr_upLmt, pul_U->pfr_lwLmt);
         printf_debug8("---pfr_Tresp_ms[%d] Ts_ms[%d]\n", pul_U->pfr_Tresp_ms, pul_U->Ts_ms);
-    }
+    }   
 }
 
 

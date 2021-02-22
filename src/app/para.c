@@ -747,6 +747,13 @@ para_information para_inf[] =
 	{"",				927},
 	{"",				928},
 	{"",				929},
+    {"",				930},
+	{"",				931},
+	{"",				932},
+	{"",				933},
+	{"",				934},
+	{"",				935},
+	{"",				936},
 };
 static unsigned short para_idx[MAX_PARA_ID];
 short para_list[MPR_PARANUM*2];
