@@ -42,7 +42,7 @@
 #include "soft_bootup.h"
 #include "fault_rec.h"
 #include "comm_offline.h"
-#include "ul_mode_control.h"
+#include "ul_mode.h"
 
 
 #define PVM4_VERSION      "1.0"
@@ -364,6 +364,8 @@ void software_init(void)
 	arm_config_data_write(CODE_PERMANENT,miro_write.code_permanent);
 	#endif
 
+    umo.pCmd = fpga_pdatabuf_read(Addr_Param26);
+    umo.qCmd = fpga_pdatabuf_read(Addr_Param27);
 	miro_write.UL_strtg_en = arm_config_data_read(ARM_UL_strtg_en);
 	miro_write.PF_x100 = arm_config_data_read(ARM_PF_x100);
 	miro_write.VQ_V1 = arm_config_data_read(ARM_VQ_V1);
@@ -394,6 +396,13 @@ void software_init(void)
 	miro_write.P_rate = arm_config_data_read(ARM_P_rate);
 	miro_write.P_max = arm_config_data_read(ARM_P_max);
 	miro_write.PF_min_x100 = arm_config_data_read(ARM_PF_min_x100);
+    miro_write.Lpf_times = arm_config_data_read(ARM_Lpf_times);
+    miro_write.Freq_rate = arm_config_data_read(ARM_Freq_rate);
+	miro_write.Pfr_dbUF = arm_config_data_read(ARM_Pfr_dbUF);
+	miro_write.Pfr_kUF = arm_config_data_read(ARM_Pfr_kUF);
+    miro_write.Pfr_dbOF = arm_config_data_read(ARM_Pfr_dbOF);
+    miro_write.Pfr_kOF = arm_config_data_read(ARM_Pfr_kOF);
+    miro_write.Pfr_Tresp_ms = arm_config_data_read(ARM_Pfr_Tresp_ms);
 
 	freqProt.fpi[0].thr = arm_config_data_read(AD_OF_Thr_1);
 	freqProt.fpi[1].thr = arm_config_data_read(AD_OF_Thr_2);

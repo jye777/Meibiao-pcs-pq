@@ -191,6 +191,13 @@ short speed_value;
 	short P_rate;
 	short P_max;
 	short PF_min_x100;
+    short Lpf_times; //滤波点数
+    short Freq_rate; //频率额定值
+	short Pfr_dbUF; //一次调频欠频死区
+	short Pfr_kUF; //一次调频欠频不等率
+    short Pfr_dbOF; //一次调频过频死区
+    short Pfr_kOF; //一次调频过频不等率
+    short Pfr_Tresp_ms; //一次调频响应时间（单位ms）
 
     short manShutdownFlag; //手动关机标志
 }micro_set;

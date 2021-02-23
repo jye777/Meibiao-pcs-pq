@@ -735,7 +735,14 @@ enum
 	Uac_rate_Addr, //	交流额定电压
 	P_rate_Addr, // 交流额定功率
 	P_max_Addr, //	交流最大输出功率
-	PF_min_x100_Addr, //	允许最小的功率因数
+	PF_min_x100_Addr, //允许最小的功率因数
+	Lpf_times_Addr, //滤波点数
+	Freq_rate_Addr, //频率额定值
+	Pfr_dbUF_Addr, //一次调频欠频死区
+	Pfr_kUF_Addr, //一次调频欠频不等率
+    Pfr_dbOF_Addr, //一次调频过频死区
+    Pfr_kOF_Addr, //一次调频过频不等率
+    Pfr_Tresp_ms_Addr, //一次调频响应时间（单位ms）
 
 	MAX_PARA_ID
 };

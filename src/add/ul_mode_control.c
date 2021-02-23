@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'ul_mode_control'.
  *
- * Model version                  : 1.181
+ * Model version                  : 1.203
  * Simulink Coder version         : 8.11 (R2016b) 25-Aug-2016
- * C/C++ source code generated on : Wed Feb 03 14:20:40 2021
+ * C/C++ source code generated on : Mon Feb 22 16:41:28 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: STMicroelectronics->ST10/Super10
@@ -14,7 +14,7 @@
  *    2. RAM efficiency
  * Validation result: Not run
  */
-
+#include "tty.h"
 #include "ul_mode_control.h"
 #ifndef UCHAR_MAX
 #include <limits.h>
@@ -74,7 +74,7 @@ ul_ExternalInputs ul_U;
 ul_ExternalOutputs ul_Y;
 uint32_T ul_div_nzp_uus32_floor(uint32_T numerator, int32_T denominator);
 int32_T ul_div_nde_s32_floor(int32_T numerator, int32_T denominator);
-extern void MATLABFunction(uint32_T rtu_sqValue, uint16_T *rty_root, uint16_T
+extern void MATLABFunction1(uint32_T rtu_sqValue, uint16_T *rty_root, uint16_T
   rtp_bit);
 uint32_T ul_div_nzp_uus32_floor(uint32_T numerator, int32_T denominator)
 {
@@ -104,45 +104,44 @@ int32_T ul_div_nde_s32_floor(int32_T numerator, int32_T denominator)
 
 /*
  * Output and update for atomic system:
- *    '<S14>/MATLAB Function'
- *    '<S15>/MATLAB Function1'
- *    '<S18>/MATLAB Function'
+ *    '<S17>/MATLAB Function1'
+ *    '<S20>/MATLAB Function'
  */
-void MATLABFunction(uint32_T rtu_sqValue, uint16_T *rty_root, uint16_T rtp_bit)
+void MATLABFunction1(uint32_T rtu_sqValue, uint16_T *rty_root, uint16_T rtp_bit)
 {
   uint16_T tmp;
   uint16_T i;
   uint16_T data;
   uint16_T data1;
 
-  /* MATLAB Function 'ul_mode_control/Subsystem/Subsystem/MATLAB Function': '<S16>:1' */
+  /* MATLAB Function 'ul_mode_control/Subsystem/Subsystem1/MATLAB Function1': '<S19>:1' */
   /* bit = bitshift(bit,-1)+1; */
-  /* '<S16>:1:3' */
+  /* '<S19>:1:3' */
   if (rtp_bit <= 15U) {
     tmp = (1U << rtp_bit);
   } else {
     tmp = 0U;
   }
 
-  /* '<S16>:1:5' */
+  /* '<S19>:1:5' */
   i = 0U;
 
-  /* '<S16>:1:7' */
+  /* '<S19>:1:7' */
   data = 0U;
   while (i <= rtp_bit) {
-    /* '<S16>:1:9' */
-    /* '<S16>:1:10' */
+    /* '<S19>:1:9' */
+    /* '<S19>:1:10' */
     data1 = data | tmp;
     if ((((uint32_T)data1) * data1) <= rtu_sqValue) {
-      /* '<S16>:1:11' */
-      /* '<S16>:1:12' */
+      /* '<S19>:1:11' */
+      /* '<S19>:1:12' */
       data = data1;
     }
 
-    /* '<S16>:1:14' */
+    /* '<S19>:1:14' */
     tmp >>= 1U;
 
-    /* '<S16>:1:15' */
+    /* '<S19>:1:15' */
     data1 = i + 1U;
     if (data1 < i) {
       data1 = MAX_uint16_T;
@@ -151,7 +150,7 @@ void MATLABFunction(uint32_T rtu_sqValue, uint16_T *rty_root, uint16_T rtp_bit)
     i = data1;
   }
 
-  /* '<S16>:1:18' */
+  /* '<S19>:1:18' */
   *rty_root = data;
 }
 
@@ -160,18 +159,22 @@ void ul_mode_control_step(void)
 {
   uint32_T x;
   uint32_T rtb_Product_3;
+  int32_T rtb_Product2;
   int16_T rtb_DataTypeConversion3;
   int16_T rtb_DataTypeConversion_b;
+  int16_T rtb_Add;
+  int16_T rtb_Add1_b;
   int16_T rtb_Switch_2_j;
   boolean_T rtb_Compare_o;
   boolean_T rtb_Compare_p;
-  int16_T rtb_Switch_3_j;
   uint32_T rtb_Switch1_c;
+  int32_T rtb_Sum1;
   int32_T rtb_Divide;
+  int32_T rtb_Switch5;
   uint16_T rtb_root;
-  int16_T rtb_Switch_3_a;
+  int16_T rtb_Switch_2_d;
 
-  /* Product: '<S15>/Product_3' incorporates:
+  /* Product: '<S17>/Product_3' incorporates:
    *  Inport: '<Root>/p_max'
    */
   rtb_Product_3 = (uint32_T)(((int32_T)ul_U.p_max) * ul_U.p_max);
@@ -263,251 +266,423 @@ void ul_mode_control_step(void)
 
   /* Outputs for Atomic SubSystem: '<S1>/volt-wat' */
   /* Outputs for Atomic SubSystem: '<S9>/Bit Shift' */
-  /* Switch: '<S12>/Switch_2' incorporates:
-   *  Constant: '<S12>/Constant1'
-   *  Constant: '<S30>/Constant'
+  /* Switch: '<S14>/Switch_2' incorporates:
+   *  Constant: '<S14>/Constant1'
+   *  Constant: '<S32>/Constant'
    *  Constant: '<S9>/Constant3'
-   *  DataTypeConversion: '<S36>/Data Type Conversion4'
+   *  DataTypeConversion: '<S44>/Data Type Conversion4'
    *  Inport: '<Root>/ul_mode'
-   *  MATLAB Function: '<S29>/bit_shift'
-   *  RelationalOperator: '<S30>/Compare'
+   *  MATLAB Function: '<S31>/bit_shift'
+   *  RelationalOperator: '<S32>/Compare'
    *  S-Function (sfix_bitop): '<S9>/Bitwise Operator'
    */
-  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S31>:1' */
-  /* '<S31>:1:6' */
+  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S33>:1' */
+  /* '<S33>:1:6' */
   if ((ul_U.ul_mode & 16U) > 0U) {
-    /* Product: '<S36>/Divide' incorporates:
-     *  DataTypeConversion: '<S36>/Data Type Conversion'
-     *  Gain: '<S36>/Gain'
+    /* Product: '<S44>/Divide' incorporates:
+     *  DataTypeConversion: '<S44>/Data Type Conversion'
+     *  Gain: '<S44>/Gain'
      *  Inport: '<Root>/uac_rate'
      */
     rtb_Divide = ul_div_nde_s32_floor(((int32_T)rtb_DataTypeConversion_b) << 13,
       ul_U.uac_rate);
 
-    /* Switch: '<S36>/Switch_1' incorporates:
+    /* Switch: '<S44>/Switch_1' incorporates:
      *  Inport: '<Root>/m3P1'
      *  Inport: '<Root>/m3V1'
      *  Inport: '<Root>/m3V2'
-     *  RelationalOperator: '<S36>/RO_1'
-     *  RelationalOperator: '<S36>/RO_3'
-     *  Switch: '<S36>/Switch_3'
+     *  RelationalOperator: '<S44>/RO_1'
+     *  RelationalOperator: '<S44>/RO_3'
+     *  Switch: '<S44>/Switch_3'
      */
     if (rtb_Divide < ul_U.m3V1) {
       rtb_Divide = ul_U.m3P1;
     } else if (rtb_Divide > ul_U.m3V2) {
-      /* Switch: '<S36>/Switch_3' incorporates:
+      /* Switch: '<S44>/Switch_3' incorporates:
        *  Inport: '<Root>/m3P2'
        */
       rtb_Divide = ul_U.m3P2;
     } else {
-      /* Switch: '<S36>/Switch_3' incorporates:
-       *  Gain: '<S36>/Gain1'
-       *  Gain: '<S36>/Gain3'
+      /* Switch: '<S44>/Switch_3' incorporates:
+       *  Gain: '<S44>/Gain1'
+       *  Gain: '<S44>/Gain3'
        *  Inport: '<Root>/m3P1'
        *  Inport: '<Root>/m3P2'
        *  Inport: '<Root>/m3V2'
-       *  Product: '<S36>/Divide2'
-       *  Product: '<S36>/Divide4'
-       *  Sum: '<S36>/Sum1'
-       *  Sum: '<S36>/Sum2'
-       *  Sum: '<S36>/Sum3'
-       *  Sum: '<S36>/Sum6'
+       *  Product: '<S44>/Divide2'
+       *  Product: '<S44>/Divide4'
+       *  Sum: '<S44>/Sum1'
+       *  Sum: '<S44>/Sum2'
+       *  Sum: '<S44>/Sum3'
+       *  Sum: '<S44>/Sum6'
        */
       rtb_Divide = ((ul_div_nde_s32_floor(((int32_T)(ul_U.m3P2 - ul_U.m3P1)) <<
         13, ul_U.m3V2 - ul_U.m3V1) * (rtb_Divide - ul_U.m3V2)) >> 13) +
         ul_U.m3P2;
     }
 
-    /* End of Switch: '<S36>/Switch_1' */
+    /* End of Switch: '<S44>/Switch_1' */
     rtb_Switch_2_j = (int16_T)rtb_Divide;
   } else {
     rtb_Switch_2_j = 0;
   }
 
-  /* End of Switch: '<S12>/Switch_2' */
+  /* End of Switch: '<S14>/Switch_2' */
   /* End of Outputs for SubSystem: '<S9>/Bit Shift' */
   /* End of Outputs for SubSystem: '<S1>/volt-wat' */
 
+  /* Delay: '<S42>/Delay' incorporates:
+   *  Inport: '<Root>/f_rate'
+   */
+  if (ul_DWork.icLoad != 0) {
+    ul_DWork.u_dly = ul_U.f_rate;
+  }
+
+  /* Gain: '<S40>/Gain' incorporates:
+   *  Inport: '<Root>/pfr_Tresp_ms'
+   */
+  rtb_Add = (ul_U.pfr_Tresp_ms << 1);
+
+  /* Sum: '<S40>/Add1' incorporates:
+   *  Inport: '<Root>/Ts_ms'
+   */
+  rtb_Add1_b = ul_U.Ts_ms - rtb_Add;
+
+  /* Delay: '<S42>/Delay1' incorporates:
+   *  Inport: '<Root>/f_rate'
+   */
+  if (ul_DWork.icLoad_n != 0) {
+    ul_DWork.y_dly = ul_U.f_rate;
+  }
+
+  /* Sum: '<S40>/Add' incorporates:
+   *  Inport: '<Root>/Ts_ms'
+   */
+  rtb_Add += ul_U.Ts_ms;
+
+  /* Sum: '<S42>/Add' incorporates:
+   *  Delay: '<S42>/Delay'
+   *  Delay: '<S42>/Delay1'
+   *  Delay: '<S42>/Delay2'
+   *  Inport: '<Root>/Ts_ms'
+   *  Inport: '<Root>/f_now'
+   *  Product: '<S42>/Product'
+   *  Product: '<S42>/Product1'
+   *  Product: '<S42>/Product3'
+   *  Product: '<S42>/Product5'
+   */
+  rtb_Divide = (((((int32_T)ul_U.f_now) * ul_U.Ts_ms) + (((int32_T)
+    ul_DWork.u_dly) * ul_U.Ts_ms)) - (((int32_T)rtb_Add1_b) * ul_DWork.y_dly)) -
+    ul_div_nde_s32_floor(((int32_T)ul_DWork.res_dly) * rtb_Add1_b, rtb_Add);
+
+  /* Product: '<S42>/Product2' */
+  rtb_Product2 = ul_div_nde_s32_floor(rtb_Divide, rtb_Add);
+
+  /* DataTypeConversion: '<S42>/Data Type Conversion' */
+  rtb_Add1_b = (int16_T)rtb_Product2;
+
+  /* Outputs for Atomic SubSystem: '<S10>/Bit Shift' */
+  /* Switch: '<S12>/Switch2' incorporates:
+   *  Constant: '<S10>/Constant3'
+   *  Constant: '<S12>/Constant1'
+   *  Constant: '<S35>/Constant'
+   *  Inport: '<Root>/ul_mode'
+   *  MATLAB Function: '<S34>/bit_shift'
+   *  RelationalOperator: '<S35>/Compare'
+   *  S-Function (sfix_bitop): '<S10>/Bitwise Operator'
+   */
+  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S36>:1' */
+  /* '<S36>:1:6' */
+  if ((ul_U.ul_mode & 64U) > 0U) {
+    /* Sum: '<S12>/Sum1' incorporates:
+     *  Inport: '<Root>/f_rate'
+     *  Inport: '<Root>/pfr_dbUF'
+     */
+    rtb_Sum1 = ((int32_T)ul_U.f_rate) - ul_U.pfr_dbUF;
+
+    /* Switch: '<S12>/Switch4' incorporates:
+     *  RelationalOperator: '<S12>/RO_2'
+     */
+    if (rtb_Sum1 > rtb_Add1_b) {
+      /* Sum: '<S12>/Sum3' */
+      rtb_Switch5 = rtb_Sum1 - rtb_Add1_b;
+
+      /* Saturate: '<S12>/Saturation' */
+      if (rtb_Switch5 > 4095L) {
+        rtb_Switch5 = 4095L;
+      } else {
+        if (rtb_Switch5 < -4095L) {
+          rtb_Switch5 = -4095L;
+        }
+      }
+
+      /* End of Saturate: '<S12>/Saturation' */
+
+      /* Product: '<S12>/Divide1' incorporates:
+       *  Gain: '<S12>/Gain'
+       *  Gain: '<S12>/Gain1'
+       *  Inport: '<Root>/f_rate'
+       *  Inport: '<Root>/pfr_kUF'
+       *  Product: '<S12>/Divide'
+       */
+      rtb_Sum1 = ul_div_nde_s32_floor(ul_div_nde_s32_floor(rtb_Switch5 << 19,
+        ul_U.f_rate) << 7, ul_U.pfr_kUF);
+      //printf_debug8("---rtb_Switch5[%d] rtb_Sum1[%d]\n", rtb_Switch5, rtb_Sum1);
+
+      /* Switch: '<S12>/Switch3' incorporates:
+       *  Inport: '<Root>/pfr_upLmt'
+       *  RelationalOperator: '<S12>/RO_3'
+       */
+      if (rtb_Sum1 > ul_U.pfr_upLmt) {
+        rtb_Switch5 = ul_U.pfr_upLmt;
+      } else {
+        rtb_Switch5 = rtb_Sum1;
+      }
+
+      /* End of Switch: '<S12>/Switch3' */
+    } else {
+      /* Sum: '<S12>/Sum2' incorporates:
+       *  Inport: '<Root>/f_rate'
+       *  Inport: '<Root>/pfr_dbOF'
+       */
+      rtb_Sum1 = ((int32_T)ul_U.f_rate) + ul_U.pfr_dbOF;
+
+      /* Switch: '<S12>/Switch5' incorporates:
+       *  Constant: '<S12>/Constant2'
+       *  RelationalOperator: '<S12>/RO_1'
+       */
+      if (rtb_Add1_b > rtb_Sum1) {
+        /* Sum: '<S12>/Sum4' */
+        rtb_Switch5 = rtb_Sum1 - rtb_Add1_b;
+
+        /* Saturate: '<S12>/Saturation1' */
+        if (rtb_Switch5 > 4095L) {
+          rtb_Switch5 = 4095L;
+        } else {
+          if (rtb_Switch5 < -4095L) {
+            rtb_Switch5 = -4095L;
+          }
+        }
+
+        /* End of Saturate: '<S12>/Saturation1' */
+
+        /* Product: '<S12>/Divide3' incorporates:
+         *  Gain: '<S12>/Gain2'
+         *  Gain: '<S12>/Gain3'
+         *  Inport: '<Root>/f_rate'
+         *  Inport: '<Root>/pfr_kOF'
+         *  Product: '<S12>/Divide2'
+         */
+        rtb_Sum1 = ul_div_nde_s32_floor(ul_div_nde_s32_floor(rtb_Switch5 << 19,
+          ul_U.f_rate) << 7, ul_U.pfr_kOF);
+
+        /* Switch: '<S12>/Switch1' incorporates:
+         *  Inport: '<Root>/pfr_lwLmt'
+         *  RelationalOperator: '<S12>/RO_4'
+         */
+        if (rtb_Sum1 < ul_U.pfr_lwLmt) {
+          rtb_Switch5 = ul_U.pfr_lwLmt;
+        } else {
+          rtb_Switch5 = rtb_Sum1;
+        }
+
+        /* End of Switch: '<S12>/Switch1' */
+      } else {
+        rtb_Switch5 = 0L;
+      }
+
+      /* End of Switch: '<S12>/Switch5' */
+    }
+
+    /* End of Switch: '<S12>/Switch4' */
+  } else {
+    rtb_Switch5 = 0L;
+  }
+
+  /* End of Switch: '<S12>/Switch2' */
+  /* End of Outputs for SubSystem: '<S10>/Bit Shift' */
+
   /* Sum: '<S3>/Sum3' */
-  rtb_Switch_2_j += rtb_DataTypeConversion3;
+  rtb_Sum1 = (((int32_T)rtb_DataTypeConversion3) + rtb_Switch_2_j) + rtb_Switch5;
+  printf_debug8("---rtb_Switch5[%d] rtb_Sum1[%d]\n", rtb_Switch5, rtb_Sum1);
 
   /* Outputs for Atomic SubSystem: '<S6>/Bit Shift' */
-  /* RelationalOperator: '<S21>/Compare' incorporates:
-   *  Constant: '<S21>/Constant'
+  /* RelationalOperator: '<S23>/Compare' incorporates:
+   *  Constant: '<S23>/Constant'
    *  Constant: '<S6>/Constant3'
    *  Inport: '<Root>/ul_mode'
-   *  MATLAB Function: '<S20>/bit_shift'
+   *  MATLAB Function: '<S22>/bit_shift'
    *  S-Function (sfix_bitop): '<S6>/Bitwise Operator'
    */
-  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S22>:1' */
-  /* '<S22>:1:6' */
+  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S24>:1' */
+  /* '<S24>:1:6' */
   rtb_Compare_o = ((ul_U.ul_mode & 1U) > 0U);
 
   /* End of Outputs for SubSystem: '<S6>/Bit Shift' */
 
   /* Outputs for Atomic SubSystem: '<S1>/const-powerfactor' */
-  /* Switch: '<S18>/Switch_3' incorporates:
-   *  Constant: '<S18>/Constant1'
+  /* Switch: '<S20>/Switch_3' incorporates:
+   *  Constant: '<S20>/Constant1'
    *  Inport: '<Root>/cosPhi'
-   *  RelationalOperator: '<S18>/RO_2'
+   *  RelationalOperator: '<S20>/RO_2'
    */
   if (8192 < ul_U.cosPhi) {
-    rtb_Switch_3_j = 8192;
+    rtb_Switch_2_j = 8192;
   } else {
-    rtb_Switch_3_j = ul_U.cosPhi;
+    rtb_Switch_2_j = ul_U.cosPhi;
   }
 
-  /* End of Switch: '<S18>/Switch_3' */
+  /* End of Switch: '<S20>/Switch_3' */
 
-  /* Switch: '<S18>/Switch_2' incorporates:
-   *  Constant: '<S18>/Constant2'
-   *  RelationalOperator: '<S18>/RO_3'
+  /* Switch: '<S20>/Switch_2' incorporates:
+   *  Constant: '<S20>/Constant2'
+   *  RelationalOperator: '<S20>/RO_3'
    */
-  if (-8192 > rtb_Switch_3_j) {
-    rtb_Switch_3_j = -8192;
+  if (-8192 > rtb_Switch_2_j) {
+    rtb_Switch_2_j = -8192;
   }
 
-  /* End of Switch: '<S18>/Switch_2' */
+  /* End of Switch: '<S20>/Switch_2' */
 
-  /* MATLAB Function: '<S18>/MATLAB Function' incorporates:
-   *  Constant: '<S18>/Constant'
-   *  DataTypeConversion: '<S18>/Data Type Conversion1'
-   *  Product: '<S18>/Divide2'
-   *  Sum: '<S18>/Sum1'
-   *  Switch: '<S18>/Switch1'
+  /* MATLAB Function: '<S20>/MATLAB Function' incorporates:
+   *  Constant: '<S20>/Constant'
+   *  DataTypeConversion: '<S20>/Data Type Conversion1'
+   *  Product: '<S20>/Divide2'
+   *  Sum: '<S20>/Sum1'
+   *  Switch: '<S20>/Switch1'
    */
-  MATLABFunction((uint32_T)(67108864L - (((int32_T)rtb_Switch_3_j) *
-    rtb_Switch_3_j)), &rtb_root, 14U);
+  MATLABFunction1((uint32_T)(67108864L - (((int32_T)rtb_Switch_2_j) *
+    rtb_Switch_2_j)), &rtb_root, 14U);
 
   /* Switch: '<S4>/Switch_2' incorporates:
    *  Constant: '<S4>/Constant1'
    */
   if (rtb_Compare_o) {
-    /* Abs: '<S18>/Abs' */
-    if (rtb_Switch_3_j < 0) {
-      rtb_Switch_3_a = -rtb_Switch_3_j;
+    /* Abs: '<S20>/Abs' */
+    if (rtb_Switch_2_j < 0) {
+      rtb_Switch_2_d = -rtb_Switch_2_j;
     } else {
-      rtb_Switch_3_a = rtb_Switch_3_j;
+      rtb_Switch_2_d = rtb_Switch_2_j;
     }
 
-    /* End of Abs: '<S18>/Abs' */
+    /* End of Abs: '<S20>/Abs' */
 
-    /* Switch: '<S18>/Switch_1' incorporates:
+    /* Switch: '<S20>/Switch_1' incorporates:
      *  Inport: '<Root>/cosMin'
-     *  RelationalOperator: '<S18>/RO_1'
+     *  RelationalOperator: '<S20>/RO_1'
      */
-    if (rtb_Switch_3_a < ul_U.cosMin) {
-      rtb_Switch_3_j = rtb_DataTypeConversion3;
+    if (rtb_Switch_2_d < ul_U.cosMin) {
+      rtb_Switch_2_j = rtb_DataTypeConversion3;
     } else {
-      /* Gain: '<S18>/Gain4' incorporates:
-       *  DataTypeConversion: '<S18>/Data Type Conversion2'
-       *  Gain: '<S18>/Gain1'
-       *  Product: '<S18>/Divide1'
-       *  Product: '<S18>/Divide3'
+      /* Gain: '<S20>/Gain4' incorporates:
+       *  DataTypeConversion: '<S20>/Data Type Conversion2'
+       *  Gain: '<S20>/Gain1'
+       *  Product: '<S20>/Divide1'
+       *  Product: '<S20>/Divide3'
        */
-      rtb_Divide = ((ul_div_nde_s32_floor(((int32_T)rtb_root) << 13,
-        rtb_Switch_3_j) * rtb_DataTypeConversion3) >> 13);
+      rtb_Switch5 = ((ul_div_nde_s32_floor(((int32_T)rtb_root) << 13,
+        rtb_Switch_2_j) * rtb_DataTypeConversion3) >> 13);
 
-      /* Saturate: '<S18>/Saturation' incorporates:
-       *  DataTypeConversion: '<S18>/Data Type Conversion4'
+      /* Saturate: '<S20>/Saturation' incorporates:
+       *  DataTypeConversion: '<S20>/Data Type Conversion4'
        */
-      if (rtb_Divide > 32767L) {
-        rtb_Switch_3_j = MAX_int16_T;
-      } else if (rtb_Divide < -32767L) {
-        rtb_Switch_3_j = -32767;
+      if (rtb_Switch5 > 32767L) {
+        rtb_Switch_2_j = MAX_int16_T;
+      } else if (rtb_Switch5 < -32767L) {
+        rtb_Switch_2_j = -32767;
       } else {
-        rtb_Switch_3_j = (int16_T)rtb_Divide;
+        rtb_Switch_2_j = (int16_T)rtb_Switch5;
       }
 
-      /* End of Saturate: '<S18>/Saturation' */
+      /* End of Saturate: '<S20>/Saturation' */
     }
 
-    /* End of Switch: '<S18>/Switch_1' */
+    /* End of Switch: '<S20>/Switch_1' */
   } else {
-    rtb_Switch_3_j = 0;
+    rtb_Switch_2_j = 0;
   }
 
   /* End of Switch: '<S4>/Switch_2' */
   /* End of Outputs for SubSystem: '<S1>/const-powerfactor' */
 
   /* Outputs for Atomic SubSystem: '<S7>/Bit Shift' */
-  /* RelationalOperator: '<S24>/Compare' incorporates:
-   *  Constant: '<S24>/Constant'
+  /* RelationalOperator: '<S26>/Compare' incorporates:
+   *  Constant: '<S26>/Constant'
    *  Constant: '<S7>/Constant3'
    *  Inport: '<Root>/ul_mode'
-   *  MATLAB Function: '<S23>/bit_shift'
+   *  MATLAB Function: '<S25>/bit_shift'
    *  S-Function (sfix_bitop): '<S7>/Bitwise Operator'
    */
-  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S25>:1' */
-  /* '<S25>:1:6' */
+  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S27>:1' */
+  /* '<S27>:1:6' */
   rtb_Compare_p = ((ul_U.ul_mode & 4U) > 0U);
 
   /* End of Outputs for SubSystem: '<S7>/Bit Shift' */
 
   /* Outputs for Atomic SubSystem: '<S1>/wat-var' */
-  /* Switch: '<S13>/Switch_2' incorporates:
-   *  Constant: '<S13>/Constant1'
+  /* Switch: '<S15>/Switch_2' incorporates:
+   *  Constant: '<S15>/Constant1'
    */
   if (rtb_Compare_p) {
-    /* Switch: '<S37>/Switch_1' incorporates:
-     *  Constant: '<S37>/Constant'
-     *  DataTypeConversion: '<S37>/Data Type Conversion4'
+    /* Switch: '<S45>/Switch_1' incorporates:
+     *  Constant: '<S45>/Constant'
+     *  DataTypeConversion: '<S45>/Data Type Conversion4'
      *  Inport: '<Root>/P2neg'
      *  Inport: '<Root>/P2pos'
      *  Inport: '<Root>/P3neg'
      *  Inport: '<Root>/P3pos'
      *  Inport: '<Root>/Q3neg'
-     *  RelationalOperator: '<S37>/RO_1'
-     *  RelationalOperator: '<S37>/RO_2'
-     *  RelationalOperator: '<S37>/RO_3'
-     *  RelationalOperator: '<S37>/RO_4'
-     *  Switch: '<S37>/Switch_2'
-     *  Switch: '<S37>/Switch_3'
-     *  Switch: '<S37>/Switch_4'
+     *  RelationalOperator: '<S45>/RO_1'
+     *  RelationalOperator: '<S45>/RO_2'
+     *  RelationalOperator: '<S45>/RO_3'
+     *  RelationalOperator: '<S45>/RO_4'
+     *  Switch: '<S45>/Switch_2'
+     *  Switch: '<S45>/Switch_3'
+     *  Switch: '<S45>/Switch_4'
      */
     if (rtb_DataTypeConversion3 < ul_U.P3neg) {
       rtb_DataTypeConversion3 = ul_U.Q3neg;
     } else if (rtb_DataTypeConversion3 < ul_U.P2neg) {
-      /* Switch: '<S37>/Switch_2' incorporates:
-       *  DataTypeConversion: '<S37>/Data Type Conversion4'
-       *  Gain: '<S37>/Gain1'
-       *  Gain: '<S37>/Gain3'
+      /* Switch: '<S45>/Switch_2' incorporates:
+       *  DataTypeConversion: '<S45>/Data Type Conversion4'
+       *  Gain: '<S45>/Gain1'
+       *  Gain: '<S45>/Gain3'
        *  Inport: '<Root>/P2neg'
        *  Inport: '<Root>/Q2neg'
        *  Inport: '<Root>/Q3neg'
-       *  Product: '<S37>/Divide2'
-       *  Product: '<S37>/Divide4'
-       *  Sum: '<S37>/Sum1'
-       *  Sum: '<S37>/Sum2'
-       *  Sum: '<S37>/Sum3'
-       *  Sum: '<S37>/Sum6'
+       *  Product: '<S45>/Divide2'
+       *  Product: '<S45>/Divide4'
+       *  Sum: '<S45>/Sum1'
+       *  Sum: '<S45>/Sum2'
+       *  Sum: '<S45>/Sum3'
+       *  Sum: '<S45>/Sum6'
        */
       rtb_DataTypeConversion3 = (int16_T)(((ul_div_nde_s32_floor(((int32_T)
         (ul_U.Q2neg - ul_U.Q3neg)) << 13, ul_U.P2neg - ul_U.P3neg) *
         (rtb_DataTypeConversion3 - ul_U.P2neg)) >> 13) + ul_U.Q2neg);
     } else if (rtb_DataTypeConversion3 > ul_U.P3pos) {
-      /* Switch: '<S37>/Switch_3' incorporates:
+      /* Switch: '<S45>/Switch_3' incorporates:
        *  Inport: '<Root>/Q3pos'
-       *  Switch: '<S37>/Switch_2'
+       *  Switch: '<S45>/Switch_2'
        */
       rtb_DataTypeConversion3 = ul_U.Q3pos;
     } else if (rtb_DataTypeConversion3 > ul_U.P2pos) {
-      /* Switch: '<S37>/Switch_4' incorporates:
-       *  DataTypeConversion: '<S37>/Data Type Conversion4'
-       *  Gain: '<S37>/Gain2'
-       *  Gain: '<S37>/Gain4'
+      /* Switch: '<S45>/Switch_4' incorporates:
+       *  DataTypeConversion: '<S45>/Data Type Conversion4'
+       *  Gain: '<S45>/Gain2'
+       *  Gain: '<S45>/Gain4'
        *  Inport: '<Root>/P2pos'
        *  Inport: '<Root>/P3pos'
        *  Inport: '<Root>/Q2pos'
        *  Inport: '<Root>/Q3pos'
-       *  Product: '<S37>/Divide1'
-       *  Product: '<S37>/Divide3'
-       *  Sum: '<S37>/Sum4'
-       *  Sum: '<S37>/Sum5'
-       *  Sum: '<S37>/Sum7'
-       *  Sum: '<S37>/Sum8'
-       *  Switch: '<S37>/Switch_2'
-       *  Switch: '<S37>/Switch_3'
+       *  Product: '<S45>/Divide1'
+       *  Product: '<S45>/Divide3'
+       *  Sum: '<S45>/Sum4'
+       *  Sum: '<S45>/Sum5'
+       *  Sum: '<S45>/Sum7'
+       *  Sum: '<S45>/Sum8'
+       *  Switch: '<S45>/Switch_2'
+       *  Switch: '<S45>/Switch_3'
        */
       rtb_DataTypeConversion3 = (int16_T)(((ul_div_nde_s32_floor(((int32_T)
         (ul_U.Q3pos - ul_U.Q2pos)) << 13, ul_U.P3pos - ul_U.P2pos) *
@@ -516,19 +691,19 @@ void ul_mode_control_step(void)
       rtb_DataTypeConversion3 = 0;
     }
 
-    /* End of Switch: '<S37>/Switch_1' */
+    /* End of Switch: '<S45>/Switch_1' */
   } else {
     rtb_DataTypeConversion3 = 0;
   }
 
-  /* End of Switch: '<S13>/Switch_2' */
+  /* End of Switch: '<S15>/Switch_2' */
   /* End of Outputs for SubSystem: '<S1>/wat-var' */
 
   /* Switch: '<S3>/Switch4' incorporates:
    *  Switch: '<S3>/Switch6'
    */
   if (rtb_Compare_o) {
-    rtb_DataTypeConversion3 = rtb_Switch_3_j;
+    rtb_DataTypeConversion3 = rtb_Switch_2_j;
   } else {
     if (!rtb_Compare_p) {
       /* Switch: '<S3>/Switch6' incorporates:
@@ -548,217 +723,185 @@ void ul_mode_control_step(void)
 
   /* Outputs for Atomic SubSystem: '<S1>/vol-var' */
   /* Outputs for Atomic SubSystem: '<S8>/Bit Shift' */
-  /* Switch: '<S11>/Switch_2' incorporates:
-   *  Constant: '<S11>/Constant1'
-   *  Constant: '<S27>/Constant'
+  /* Switch: '<S13>/Switch_2' incorporates:
+   *  Constant: '<S13>/Constant1'
+   *  Constant: '<S29>/Constant'
    *  Constant: '<S8>/Constant3'
-   *  DataTypeConversion: '<S35>/Data Type Conversion4'
+   *  DataTypeConversion: '<S43>/Data Type Conversion4'
    *  Inport: '<Root>/ul_mode'
-   *  MATLAB Function: '<S26>/bit_shift'
-   *  RelationalOperator: '<S27>/Compare'
+   *  MATLAB Function: '<S28>/bit_shift'
+   *  RelationalOperator: '<S29>/Compare'
    *  S-Function (sfix_bitop): '<S8>/Bitwise Operator'
    */
-  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S28>:1' */
-  /* '<S28>:1:6' */
+  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S30>:1' */
+  /* '<S30>:1:6' */
   if ((ul_U.ul_mode & 2U) > 0U) {
-    /* Product: '<S35>/Divide' incorporates:
-     *  DataTypeConversion: '<S35>/Data Type Conversion'
-     *  Gain: '<S35>/Gain'
+    /* Product: '<S43>/Divide' incorporates:
+     *  DataTypeConversion: '<S43>/Data Type Conversion'
+     *  Gain: '<S43>/Gain'
      *  Inport: '<Root>/uac_rate'
      */
-    rtb_Divide = ul_div_nde_s32_floor(((int32_T)rtb_DataTypeConversion_b) << 13,
+    rtb_Switch5 = ul_div_nde_s32_floor(((int32_T)rtb_DataTypeConversion_b) << 13,
       ul_U.uac_rate);
 
-    /* Switch: '<S35>/Switch_1' incorporates:
+    /* Switch: '<S43>/Switch_1' incorporates:
      *  Inport: '<Root>/m2Q1'
      *  Inport: '<Root>/m2V1'
      *  Inport: '<Root>/m2V2'
      *  Inport: '<Root>/m2V3'
      *  Inport: '<Root>/m2V4'
-     *  RelationalOperator: '<S35>/RO_1'
-     *  RelationalOperator: '<S35>/RO_2'
-     *  RelationalOperator: '<S35>/RO_3'
-     *  RelationalOperator: '<S35>/RO_4'
-     *  Switch: '<S35>/Switch_2'
-     *  Switch: '<S35>/Switch_3'
-     *  Switch: '<S35>/Switch_4'
+     *  RelationalOperator: '<S43>/RO_1'
+     *  RelationalOperator: '<S43>/RO_2'
+     *  RelationalOperator: '<S43>/RO_3'
+     *  RelationalOperator: '<S43>/RO_4'
+     *  Switch: '<S43>/Switch_2'
+     *  Switch: '<S43>/Switch_3'
+     *  Switch: '<S43>/Switch_4'
      */
-    if (rtb_Divide < ul_U.m2V1) {
-      rtb_Divide = ul_U.m2Q1;
-    } else if (rtb_Divide < ul_U.m2V2) {
-      /* Switch: '<S35>/Switch_2' incorporates:
-       *  Gain: '<S35>/Gain1'
-       *  Gain: '<S35>/Gain3'
+    if (rtb_Switch5 < ul_U.m2V1) {
+      rtb_Switch5 = ul_U.m2Q1;
+    } else if (rtb_Switch5 < ul_U.m2V2) {
+      /* Switch: '<S43>/Switch_2' incorporates:
+       *  Gain: '<S43>/Gain1'
+       *  Gain: '<S43>/Gain3'
        *  Inport: '<Root>/m2Q1'
        *  Inport: '<Root>/m2Q2'
        *  Inport: '<Root>/m2V2'
-       *  Product: '<S35>/Divide2'
-       *  Product: '<S35>/Divide4'
-       *  Sum: '<S35>/Sum1'
-       *  Sum: '<S35>/Sum2'
-       *  Sum: '<S35>/Sum3'
-       *  Sum: '<S35>/Sum6'
+       *  Product: '<S43>/Divide2'
+       *  Product: '<S43>/Divide4'
+       *  Sum: '<S43>/Sum1'
+       *  Sum: '<S43>/Sum2'
+       *  Sum: '<S43>/Sum3'
+       *  Sum: '<S43>/Sum6'
        */
-      rtb_Divide = ((ul_div_nde_s32_floor(((int32_T)(ul_U.m2Q2 - ul_U.m2Q1)) <<
-        13, ul_U.m2V2 - ul_U.m2V1) * (rtb_Divide - ul_U.m2V2)) >> 13) +
+      rtb_Switch5 = ((ul_div_nde_s32_floor(((int32_T)(ul_U.m2Q2 - ul_U.m2Q1)) <<
+        13, ul_U.m2V2 - ul_U.m2V1) * (rtb_Switch5 - ul_U.m2V2)) >> 13) +
         ul_U.m2Q2;
-    } else if (rtb_Divide > ul_U.m2V4) {
-      /* Switch: '<S35>/Switch_3' incorporates:
+    } else if (rtb_Switch5 > ul_U.m2V4) {
+      /* Switch: '<S43>/Switch_3' incorporates:
        *  Inport: '<Root>/m2Q4'
-       *  Switch: '<S35>/Switch_2'
+       *  Switch: '<S43>/Switch_2'
        */
-      rtb_Divide = ul_U.m2Q4;
-    } else if (((int16_T)rtb_Divide) > ul_U.m2V3) {
-      /* Switch: '<S35>/Switch_4' incorporates:
-       *  Gain: '<S35>/Gain2'
-       *  Gain: '<S35>/Gain4'
+      rtb_Switch5 = ul_U.m2Q4;
+    } else if (((int16_T)rtb_Switch5) > ul_U.m2V3) {
+      /* Switch: '<S43>/Switch_4' incorporates:
+       *  Gain: '<S43>/Gain2'
+       *  Gain: '<S43>/Gain4'
        *  Inport: '<Root>/m2Q3'
        *  Inport: '<Root>/m2Q4'
        *  Inport: '<Root>/m2V3'
        *  Inport: '<Root>/m2V4'
-       *  Product: '<S35>/Divide1'
-       *  Product: '<S35>/Divide3'
-       *  Sum: '<S35>/Sum4'
-       *  Sum: '<S35>/Sum5'
-       *  Sum: '<S35>/Sum7'
-       *  Sum: '<S35>/Sum8'
-       *  Switch: '<S35>/Switch_2'
-       *  Switch: '<S35>/Switch_3'
+       *  Product: '<S43>/Divide1'
+       *  Product: '<S43>/Divide3'
+       *  Sum: '<S43>/Sum4'
+       *  Sum: '<S43>/Sum5'
+       *  Sum: '<S43>/Sum7'
+       *  Sum: '<S43>/Sum8'
+       *  Switch: '<S43>/Switch_2'
+       *  Switch: '<S43>/Switch_3'
        */
-      rtb_Divide = ((ul_div_nde_s32_floor(((int32_T)(ul_U.m2Q4 - ul_U.m2Q3)) <<
-        13, ul_U.m2V4 - ul_U.m2V3) * (rtb_Divide - ul_U.m2V3)) >> 13) +
+      rtb_Switch5 = ((ul_div_nde_s32_floor(((int32_T)(ul_U.m2Q4 - ul_U.m2Q3)) <<
+        13, ul_U.m2V4 - ul_U.m2V3) * (rtb_Switch5 - ul_U.m2V3)) >> 13) +
         ul_U.m2Q3;
     } else {
-      /* Switch: '<S35>/Switch_4' incorporates:
-       *  Constant: '<S35>/Constant'
-       *  Switch: '<S35>/Switch_2'
-       *  Switch: '<S35>/Switch_3'
+      /* Switch: '<S43>/Switch_4' incorporates:
+       *  Constant: '<S43>/Constant'
+       *  Switch: '<S43>/Switch_2'
+       *  Switch: '<S43>/Switch_3'
        */
-      rtb_Divide = 0L;
+      rtb_Switch5 = 0L;
     }
 
-    /* End of Switch: '<S35>/Switch_1' */
-    rtb_DataTypeConversion_b = (int16_T)rtb_Divide;
+    /* End of Switch: '<S43>/Switch_1' */
+    rtb_DataTypeConversion_b = (int16_T)rtb_Switch5;
   } else {
     rtb_DataTypeConversion_b = 0;
   }
 
-  /* End of Switch: '<S11>/Switch_2' */
+  /* End of Switch: '<S13>/Switch_2' */
   /* End of Outputs for SubSystem: '<S8>/Bit Shift' */
   /* End of Outputs for SubSystem: '<S1>/vol-var' */
 
   /* Sum: '<S3>/Sum2' */
-  rtb_DataTypeConversion_b += rtb_DataTypeConversion3;
+  rtb_DataTypeConversion3 += rtb_DataTypeConversion_b;
 
-  /* Sum: '<S15>/Sum2' incorporates:
-   *  Product: '<S15>/Product_4'
-   *  Product: '<S15>/Product_5'
+  /* Sum: '<S17>/Sum2' incorporates:
+   *  Product: '<S17>/Product_4'
+   *  Product: '<S17>/Product_5'
    */
-  rtb_Divide = (int32_T)(((uint32_T)(((int32_T)rtb_Switch_2_j) * rtb_Switch_2_j))
-    + (((int32_T)rtb_DataTypeConversion_b) * rtb_DataTypeConversion_b));
+  rtb_Switch5 = (int32_T)(((uint32_T)(rtb_Sum1 * rtb_Sum1)) + (((int32_T)
+    rtb_DataTypeConversion3) * rtb_DataTypeConversion3));
 
-  /* MATLAB Function: '<S15>/MATLAB Function1' incorporates:
-   *  Product: '<S15>/Product_7'
-   *  Product: '<S15>/Product_8'
+  /* MATLAB Function: '<S17>/MATLAB Function1' incorporates:
+   *  Product: '<S17>/Product_7'
+   *  Product: '<S17>/Product_8'
    */
-  MATLABFunction(ul_div_nzp_uus32_floor(rtb_Product_3 << 26, rtb_Divide),
-                 &rtb_root, 14U);
+  MATLABFunction1(ul_div_nzp_uus32_floor(rtb_Product_3 << 26, rtb_Switch5),
+                  &rtb_root, 14U);
 
-  /* RelationalOperator: '<S15>/RO_2' */
-  if (rtb_Divide < 0L) {
-    rtb_Divide = 0L;
+  /* RelationalOperator: '<S17>/RO_2' */
+  if (rtb_Switch5 < 0L) {
+    rtb_Switch5 = 0L;
   }
 
-  rtb_Compare_o = (((uint32_T)rtb_Divide) > rtb_Product_3);
+  rtb_Compare_o = (((uint32_T)rtb_Switch5) > rtb_Product_3);
 
-  /* End of RelationalOperator: '<S15>/RO_2' */
+  /* End of RelationalOperator: '<S17>/RO_2' */
 
-  /* Switch: '<S15>/Switch7' incorporates:
-   *  Gain: '<S15>/Gain2'
-   *  Product: '<S15>/Product_9'
+  /* Switch: '<S17>/Switch7' incorporates:
+   *  Gain: '<S17>/Gain2'
+   *  Gain: '<S17>/Gain3'
+   *  Product: '<S17>/Product_1'
+   *  Product: '<S17>/Product_9'
+   *  Switch: '<S17>/Switch1'
    */
   if (rtb_Compare_o) {
-    rtb_DataTypeConversion3 = (int16_T)((((int32_T)rtb_root) * rtb_Switch_2_j) >>
-      13);
-  } else {
-    rtb_DataTypeConversion3 = rtb_Switch_2_j;
+    rtb_Sum1 = (int16_T)((rtb_root * rtb_Sum1) >> 13);
+    rtb_DataTypeConversion3 = (int16_T)((((int32_T)rtb_root) *
+      rtb_DataTypeConversion3) >> 13);
   }
 
-  /* End of Switch: '<S15>/Switch7' */
+  /* End of Switch: '<S17>/Switch7' */
 
   /* Outport: '<Root>/p_cmd_out' incorporates:
-   *  Gain: '<S15>/Gain4'
+   *  Gain: '<S17>/Gain4'
    *  Inport: '<Root>/p_rate'
-   *  Product: '<S15>/Product_2'
+   *  Product: '<S17>/Product_2'
    */
-  ul_Y.p_cmd_out = (int16_T)((((int32_T)rtb_DataTypeConversion3) * ul_U.p_rate) >>
-    13);
-
-  /* Switch: '<S15>/Switch1' incorporates:
-   *  Gain: '<S15>/Gain3'
-   *  Product: '<S15>/Product_1'
-   */
-  if (rtb_Compare_o) {
-    rtb_DataTypeConversion3 = (int16_T)((((int32_T)rtb_root) *
-      rtb_DataTypeConversion_b) >> 13);
-  } else {
-    rtb_DataTypeConversion3 = rtb_DataTypeConversion_b;
-  }
-
-  /* End of Switch: '<S15>/Switch1' */
+  ul_Y.p_cmd_out = (int16_T)((rtb_Sum1 * ul_U.p_rate) >> 13);
 
   /* Outport: '<Root>/q_cmd_out' incorporates:
-   *  Gain: '<S15>/Gain1'
+   *  Gain: '<S17>/Gain1'
    *  Inport: '<Root>/p_rate'
-   *  Product: '<S15>/Product_10'
+   *  Product: '<S17>/Product_10'
    */
   ul_Y.q_cmd_out = (int16_T)((((int32_T)ul_U.p_rate) * rtb_DataTypeConversion3) >>
     13);
 
-  /* Outputs for Atomic SubSystem: '<S10>/Bit Shift' */
-  /* Switch: '<S3>/Switch1' incorporates:
-   *  Constant: '<S10>/Constant3'
-   *  Constant: '<S33>/Constant'
-   *  Inport: '<Root>/ul_mode'
-   *  MATLAB Function: '<S32>/bit_shift'
-   *  RelationalOperator: '<S33>/Compare'
-   *  S-Function (sfix_bitop): '<S10>/Bitwise Operator'
+  /* Outport: '<Root>/freq_lpf' */
+  ul_Y.freq_lpf = rtb_Add1_b;
+
+  /* Sum: '<S42>/Add1' incorporates:
+   *  Product: '<S42>/Product4'
    */
-  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S34>:1' */
-  /* '<S34>:1:6' */
-  if ((ul_U.ul_mode & 32U) > 0U) {
-    rtb_DataTypeConversion3 = rtb_DataTypeConversion_b;
-  } else {
-    rtb_DataTypeConversion3 = rtb_Switch_2_j;
-  }
+  /* MATLAB Function 'HDL Operations/Bit Shift/bit_shift': '<S39>:1' */
+  /* '<S39>:1:6' */
+  rtb_Divide -= rtb_Product2 * rtb_Add;
 
-  /* End of Switch: '<S3>/Switch1' */
-  /* End of Outputs for SubSystem: '<S10>/Bit Shift' */
-
-  /* Sum: '<S14>/Sum1' incorporates:
-   *  Inport: '<Root>/p_max'
-   *  Product: '<S14>/Product_1'
-   *  Product: '<S14>/Product_2'
+  /* Update for Delay: '<S42>/Delay' incorporates:
+   *  Update for Inport: '<Root>/f_now'
    */
-  rtb_Divide = (((int32_T)ul_U.p_max) * ul_U.p_max) - (((int32_T)
-    rtb_DataTypeConversion3) * rtb_DataTypeConversion3);
+  ul_DWork.icLoad = 0U;
+  ul_DWork.u_dly = ul_U.f_now;
 
-  /* Switch: '<S14>/Switch1' incorporates:
-   *  Constant: '<S14>/Constant1'
-   *  Constant: '<S14>/Constant2'
-   *  DataTypeConversion: '<S14>/Data Type Conversion4'
-   *  RelationalOperator: '<S14>/RO_1'
+  /* Update for Delay: '<S42>/Delay1' */
+  ul_DWork.icLoad_n = 0U;
+  ul_DWork.y_dly = rtb_Add1_b;
+
+  /* Update for Delay: '<S42>/Delay2' incorporates:
+   *  DataTypeConversion: '<S42>/Data Type Conversion1'
    */
-  if (rtb_Divide < 0L) {
-    rtb_Product_3 = 0UL;
-  } else {
-    rtb_Product_3 = (uint32_T)rtb_Divide;
-  }
-
-  /* End of Switch: '<S14>/Switch1' */
-
-  /* MATLAB Function: '<S14>/MATLAB Function' */
-  MATLABFunction(rtb_Product_3, &rtb_root, 14U);
+  ul_DWork.res_dly = (int16_T)rtb_Divide;
 }
 
 /* Model initialize function */
@@ -777,181 +920,16 @@ void ul_mode_control_initialize(void)
   (void) memset((void *)&ul_Y, 0,
                 sizeof(ul_ExternalOutputs));
 
+  /* InitializeConditions for Delay: '<S42>/Delay' */
+  ul_DWork.icLoad = 1U;
+
+  /* InitializeConditions for Delay: '<S42>/Delay1' */
+  ul_DWork.icLoad_n = 1U;
+
   /* SystemInitialize for MATLAB Function: '<S1>/MATLAB Function1' */
   ul_DWork.sum_not_empty = false;
   ul_DWork.cnt = 0U;
   ul_DWork.sum = 0UL;
-}
-
-
-#include "fpga.h"
-#include "para.h"
-#include "tty.h"
-extern short setting_data_handle(short addr, short value);
-
-
-ul_mode_opt_t umo;
-
-#define UNIT_PU	8192
-
-enum
-{
-	UL_MODE_CONST_PF = 0,	//恒功率因数
-	UL_MODE_VQ		 = 1,	//电压无功
-	UL_MODE_PQ		 = 2,	//有功无功
-	UL_MODE_CONST_Q	 = 3,	//恒无功
-	UL_MODE_VP		 = 4,	//电压有功
-};
-
-
-static void ul_mode_judge(ul_mode_opt_t *pUmo)
-{
-    volatile micro_set *pMs = pUmo->pMs;
-    ul_ExternalInputs *pul_U = pUmo->pRtu;
-#if 0
-    if(GETBIT(pMs->UL_strtg_en, 0) == 1) {
-        pul_U->ul_mode = UL_MODE_CONST_Q;
-    } else if(GETBIT(pMs->UL_strtg_en, 1) == 1) {
-        pul_U->ul_mode = UL_MODE_CONST_PF;
-    } else if(GETBIT(pMs->UL_strtg_en, 2) == 1) {
-        pul_U->ul_mode = UL_MODE_PQ;
-    } else if(GETBIT(pMs->UL_strtg_en, 3) == 1) {
-        pul_U->ul_mode = UL_MODE_VQ;
-    } else if(GETBIT(pMs->UL_strtg_en, 4) == 1) {
-        pul_U->ul_mode = UL_MODE_VP;
-    } else {
-        pul_U->ul_mode = UL_MODE_NONE;
-    }
-#else
-    pul_U->ul_mode = pMs->UL_strtg_en;
-#endif
-}
-
-static void ul_input_vars_update(ul_mode_opt_t *pUmo)
-{
-    volatile micro_set *pMs = pUmo->pMs;
-    ul_ExternalInputs *pul_U = pUmo->pRtu;
-    
-    ul_mode_judge(pUmo);
-    
-    pul_U->p_cmd = pUmo->pCmd;
-    pul_U->q_cmd = pUmo->qCmd;
-    
-    if(GETBIT(pul_U->ul_mode, UL_MODE_CONST_PF) == 1) { //UL_MODE_CONST_PF
-        pul_U->p_rate = setting_data_handle(Addr_Param26, pMs->P_rate * 10);
-        pul_U->p_max = (int16_t)(pMs->P_max * UNIT_PU / 100);
-        pul_U->cosPhi = (int16_t)(pMs->PF_x100 * UNIT_PU / 100);
-        pul_U->cosMin = (int16_t)(pMs->PF_min_x100 * UNIT_PU / 100);
-        printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
-        printf_debug8("---p_rate[%d] p_max[%d] cosPhi[%d] cosMin[%d]\n", pul_U->p_rate, pul_U->p_max, pul_U->cosPhi, 
-pul_U->cosMin);
-    } else if(GETBIT(pul_U->ul_mode, UL_MODE_VQ) == 1) { //UL_MODE_VQ
-		pul_U->uac_now = (int16_t)((fpga_pdatabuf_get[Addr_Param256] + fpga_pdatabuf_get[Addr_Param257] + fpga_pdatabuf_get[
-Addr_Param258]) / 3.0f);
-		pul_U->uac_rate = setting_data_handle(Addr_Param256, pMs->Uac_rate * 10);
-		pul_U->p_rate = setting_data_handle(Addr_Param26, pMs->P_rate * 10);
-		pul_U->p_max = (int16_t)(pMs->P_max * UNIT_PU / 100);
-		pul_U->m2V1 = (int16_t)(pMs->VQ_V1 * UNIT_PU / 100);
-		pul_U->m2V2 = (int16_t)(pMs->VQ_V2 * UNIT_PU / 100);
-		pul_U->m2V3 = (int16_t)(pMs->VQ_V3 * UNIT_PU / 100);
-		pul_U->m2V4 = (int16_t)(pMs->VQ_V4 * UNIT_PU / 100);
-		pul_U->m2Q1 = (int16_t)(pMs->VQ_Q1 * UNIT_PU / 100);
-		pul_U->m2Q2 = (int16_t)(pMs->VQ_Q2 * UNIT_PU / 100);
-		pul_U->m2Q3 = (int16_t)(pMs->VQ_Q3 * UNIT_PU / 100);
-		pul_U->m2Q4 = (int16_t)(pMs->VQ_Q4 * UNIT_PU / 100);
-        printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
-		printf_debug8("---uac_now[%d] uac_rate[%d] p_rate[%d] p_max[%d]\n", pul_U->uac_now, pul_U->uac_rate, pul_U->p_rate, 
-pul_U->p_max);
-		printf_debug8("---v1-v4[%d][%d][%d][%d]\n", pul_U->m2V1, pul_U->m2V2, pul_U->m2V3, pul_U->m2V4);
-		printf_debug8("---q1-q4[%d][%d][%d][%d]\n", pul_U->m2Q1, pul_U->m2Q2, pul_U->m2Q3, pul_U->m2Q4);
-    } else if(GETBIT(pul_U->ul_mode, UL_MODE_PQ) == 1) { //UL_MODE_PQ
-		pul_U->p_rate = setting_data_handle(Addr_Param26, pMs->P_rate * 10);
-		pul_U->p_max = (int16_t)(pMs->P_max * UNIT_PU / 100);
-		pul_U->P3neg = (int16_t)(pMs->PQ_n_P3 * UNIT_PU / 100);
-		pul_U->P2neg = (int16_t)(pMs->PQ_n_P2 * UNIT_PU / 100);
-		pul_U->P2pos = (int16_t)(pMs->PQ_p_P2 * UNIT_PU / 100);
-		pul_U->P3pos = (int16_t)(pMs->PQ_p_P3 * UNIT_PU / 100);
-		pul_U->Q3neg = (int16_t)(pMs->PQ_n_Q3 * UNIT_PU / 100);
-		pul_U->Q2neg = (int16_t)(pMs->PQ_n_Q2 * UNIT_PU / 100);
-		pul_U->Q2pos = (int16_t)(pMs->PQ_p_Q2 * UNIT_PU / 100);
-		pul_U->Q3pos = (int16_t)(pMs->PQ_p_Q3 * UNIT_PU / 100);
-        printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
-		printf_debug8("---p_rate[%d] p_max[%d]\n", pul_U->p_rate, pul_U->p_max);
-		printf_debug8("---pn32pp23[%d][%d][%d][%d]\n", pul_U->P3neg, pul_U->P2neg, pul_U->P2pos, pul_U->P3pos);
-		printf_debug8("---qn32qp23[%d][%d][%d][%d]\n", pul_U->Q3neg, pul_U->Q2neg, pul_U->Q2pos, pul_U->Q3pos);
-    } else if(GETBIT(pul_U->ul_mode, UL_MODE_CONST_Q) == 1) { //UL_MODE_CONST_Q
-        printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
-    } else if(GETBIT(pul_U->ul_mode, UL_MODE_VP) == 1) { //UL_MODE_VP
-		pul_U->uac_now = (int16_t)((fpga_pdatabuf_get[Addr_Param256] + fpga_pdatabuf_get[Addr_Param257] + fpga_pdatabuf_get[
-Addr_Param258]) / 3.0f);
-		pul_U->uac_rate = setting_data_handle(Addr_Param256, pMs->Uac_rate * 10);
-		pul_U->p_rate = setting_data_handle(Addr_Param26, pMs->P_rate * 10);
-		pul_U->p_max = (int16_t)(pMs->P_max * UNIT_PU / 100);
-		pul_U->m3V1 = (int16_t)(pMs->VP_V1 * UNIT_PU / 100);
-		pul_U->m3V2 = (int16_t)(pMs->VP_V2 * UNIT_PU / 100);
-		pul_U->m3P1 = (int16_t)(pMs->VP_P1 * UNIT_PU / 100);
-		pul_U->m3P2 = (int16_t)(pMs->VP_P2 * UNIT_PU / 100);
-        printf_debug8("---p_cmd[%d] q_cmd[%d]\n", pul_U->p_cmd, pul_U->q_cmd);
-        printf_debug8("---uac_now[%d] uac_rate[%d] p_rate[%d] p_max[%d]\n", pul_U->uac_now, pul_U->uac_rate, pul_U->
-p_rate, pul_U->p_max);
-		printf_debug8("---v12p12[%d][%d][%d][%d]\n", pul_U->m3V1, pul_U->m3V2, pul_U->m3P1, pul_U->m3P2);
-    }
-}
-
-
-static void ul_mode_handle(ul_mode_opt_t *pUmo)
-{
-#if 0
-    if(GETBIT(pUmo->pRtu->ul_mode, 5) == 0) { //Const-PF
-        fpga_write(Addr_Param26, pUmo->pRty->p_cmd_out);
-        fpga_write(Addr_Param27, pUmo->pRty->q_cmd_out);
-        printf_debug8("------p_out[%d] q_out[%d]\n\n", pUmo->pRty->p_cmd_out, pUmo->pRty->q_cmd_out);
-    } else {
-        fpga_write(Addr_Param27, pUmo->pRty->p_cmd_out);
-        fpga_write(Addr_Param26, pUmo->pRty->q_cmd_out);
-        printf_debug8("------p_out[%d] q_out[%d]\n\n", pUmo->pRty->p_cmd_out, pUmo->pRty->q_cmd_out);
-    }
-#else
-    fpga_write(Addr_Param26, pUmo->pRty->p_cmd_out);
-    fpga_write(Addr_Param27, pUmo->pRty->q_cmd_out);
-    printf_debug8("------p_out[%d] q_out[%d]\n\n", pUmo->pRty->p_cmd_out, pUmo->pRty->q_cmd_out);
-#endif    
-}
-
-
-static void ul_mode_pwr_assign(ul_mode_opt_t *pUmo)
-{
-    fpga_write(Addr_Param26, pUmo->pCmd);
-    fpga_write(Addr_Param27, pUmo->qCmd);
-}
-
-
-#define UM_TASK_PERIOD 5
-void ul_mode_task(const void *pdata)
-{
-    ul_mode_opt_t *pUmo = (ul_mode_opt_t *)pdata;
-    
-    pUmo->pRtu = &ul_U;
-    pUmo->pRty = &ul_Y;
-    pUmo->pMs = &miro_write;
-    
-    ul_mode_control_initialize();
-
-    pUmo->pRtu->lpf_times = (uint16_T)(1000 / UM_TASK_PERIOD);
-
-    while(1)
-    {
-        ul_input_vars_update(pUmo);
-
-        if((pUmo->pRtu->ul_mode & 0x1F) != 0) {
-            ul_mode_control_step();
-            ul_mode_handle(pUmo);
-        } else {
-            ul_mode_pwr_assign(pUmo);
-        }
-        
-        osDelay(UM_TASK_PERIOD);
-    }  
 }
 
 

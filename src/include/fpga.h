@@ -10,7 +10,7 @@
 #define MODULUS					(10)
 #define SOFT_VER_V				(3)
 #define SOFT_VER_C				(1)
-#define SOFT_VER_B				(30)   
+#define SOFT_VER_B				(33)   
 #define SOFT_VER				((SOFT_VER_V<<12) + (SOFT_VER_C<<8) + SOFT_VER_B)
 #define DEVICE_NO				((DEV_TYPE<<12) + (PCS_POWER_LEVEL))
 #define SOFT_VER1				((SOFT_VER_V*1000) + (SOFT_VER_C*100) + SOFT_VER_B)
@@ -364,6 +364,14 @@ enum {
 	AD_CO_EN, //通讯判线停机使能
 	AD_CO_JTIME, //通讯掉线判定时间
 	AD_BOOTUP_TIME, //启动时间
+
+    ARM_Lpf_times, //滤波点数
+    ARM_Freq_rate, //频率额定值
+	ARM_Pfr_dbUF, //一次调频欠频死区
+	ARM_Pfr_kUF, //一次调频欠频不等率
+    ARM_Pfr_dbOF, //一次调频过频死区
+    ARM_Pfr_kOF, //一次调频过频不等率
+    ARM_Pfr_Tresp_ms, //一次调频响应时间（单位ms）
 	
 	ARM_CFG_MAX,
 };

@@ -36,7 +36,7 @@
 #include "soft_bootup.h"
 #include "fault_rec.h"
 #include "comm_offline.h"
-#include "ul_mode_control.h"
+#include "ul_mode.h"
 
 _mbser_inf mbser_inf[MAX_CONN_NUM];
 _update_inf update_inf;
@@ -437,22 +437,14 @@ unsigned char mb_writereg(unsigned short saddr, unsigned short value, short *rt)
 				} 
 				else if(saddr == Addr_Param26) 
 				{
-					if(svg_info.svg_en == 0) 
-					{
-						fpga_write(saddr, value);
-						fpga_pdatabuf_write(saddr, value);
-					}
-					PQNonSVG.p=getting_data_handle(saddr, value);
+                    fpga_write(saddr, value);
+				    fpga_pdatabuf_write(saddr, value);
                     umo.pCmd = value;
 				} 
 				else if(saddr == Addr_Param27) 
 				{
-					if(svg_info.svg_en == 0) 
-					{
-						fpga_write(saddr, value);
-						fpga_pdatabuf_write(saddr, value);
-					}
-					PQNonSVG.q=getting_data_handle(saddr, value);
+					fpga_write(saddr, value);
+					fpga_pdatabuf_write(saddr, value);
                     umo.qCmd = value;
 				}
 				*rt = value;
@@ -1484,6 +1476,55 @@ unsigned char mb_writereg(unsigned short saddr, unsigned short value, short *rt)
 					setpara(PF_min_x100_Addr,value);
 					miro_write.PF_min_x100 = value; 
 					arm_config_data_write(ARM_PF_min_x100, value);
+					*rt=value;	
+					break;
+
+                case Lpf_times_Addr: //	允许最小的功率因数
+					setpara(Lpf_times_Addr,value);
+					miro_write.Lpf_times = value; 
+					arm_config_data_write(ARM_Lpf_times, value);
+					*rt=value;	
+					break;
+
+                case Freq_rate_Addr: //频率额定值
+                    setpara(Freq_rate_Addr,value);
+					miro_write.Freq_rate = value; 
+					arm_config_data_write(ARM_Freq_rate, value);
+					*rt=value;	
+					break;
+                    
+            	case Pfr_dbUF_Addr: //一次调频欠频死区
+            	    setpara(Pfr_dbUF_Addr,value);
+					miro_write.Pfr_dbUF = value; 
+					arm_config_data_write(ARM_Pfr_dbUF, value);
+					*rt=value;	
+					break;
+                    
+            	case Pfr_kUF_Addr: //一次调频欠频不等率
+            	    setpara(Pfr_kUF_Addr,value);
+					miro_write.Pfr_kUF = value; 
+					arm_config_data_write(ARM_Pfr_kUF, value);
+					*rt=value;	
+					break;
+                    
+                case Pfr_dbOF_Addr: //一次调频过频死区
+                    setpara(Pfr_dbOF_Addr,value);
+					miro_write.Pfr_dbOF = value; 
+					arm_config_data_write(ARM_Pfr_dbOF, value);
+					*rt=value;	
+					break;
+                    
+                case Pfr_kOF_Addr: //一次调频过频不等率
+                    setpara(Pfr_kOF_Addr,value);
+					miro_write.Pfr_kOF = value; 
+					arm_config_data_write(ARM_Pfr_kOF, value);
+					*rt=value;	
+					break;
+                    
+                case Pfr_Tresp_ms_Addr: //一次调频响应时间（单位ms）
+                    setpara(Pfr_Tresp_ms_Addr,value);
+					miro_write.Pfr_Tresp_ms = value; 
+					arm_config_data_write(ARM_Pfr_Tresp_ms, value);
 					*rt=value;	
 					break;
 
@@ -2891,7 +2932,7 @@ static int mbhandle(_mbser_inf *mbsinf, unsigned char *rbuf,
 {
     unsigned short len;
     int resplen = 0;
-	short state8;
+	short state8 = state8;
 	
     resp[0] = rbuf[0];
     resp[1] = rbuf[1];
