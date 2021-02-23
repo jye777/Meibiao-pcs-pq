@@ -42,7 +42,7 @@
 #include "soft_bootup.h"
 #include "fault_rec.h"
 #include "comm_offline.h"
-#include "ul_mode_control.h"
+#include "ul_mode.h"
 
 
 #define PVM4_VERSION      "1.0"
@@ -364,6 +364,8 @@ void software_init(void)
 	arm_config_data_write(CODE_PERMANENT,miro_write.code_permanent);
 	#endif
 
+    umo.pCmd = fpga_pdatabuf_read(Addr_Param26);
+    umo.qCmd = fpga_pdatabuf_read(Addr_Param27);
 	miro_write.UL_strtg_en = arm_config_data_read(ARM_UL_strtg_en);
 	miro_write.PF_x100 = arm_config_data_read(ARM_PF_x100);
 	miro_write.VQ_V1 = arm_config_data_read(ARM_VQ_V1);

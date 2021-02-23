@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'ul_mode_control'.
  *
- * Model version                  : 1.198
+ * Model version                  : 1.203
  * Simulink Coder version         : 8.11 (R2016b) 25-Aug-2016
- * C/C++ source code generated on : Sat Feb 20 14:50:40 2021
+ * C/C++ source code generated on : Mon Feb 22 16:41:28 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: STMicroelectronics->ST10/Super10
@@ -27,13 +27,14 @@
 
 /* Block signals and states (auto storage) for system '<Root>' */
 typedef struct {
-  int32_T y_dly;                       /* '<S41>/Delay1' */
   uint32_T sum;                        /* '<S1>/MATLAB Function1' */
-  int16_T u_dly;                       /* '<S41>/Delay' */
+  int16_T u_dly;                       /* '<S42>/Delay' */
+  int16_T y_dly;                       /* '<S42>/Delay1' */
+  int16_T res_dly;                     /* '<S42>/Delay2' */
   uint16_T cnt;                        /* '<S1>/MATLAB Function1' */
   uint16_T avg;                        /* '<S1>/MATLAB Function1' */
-  uint8_T icLoad;                      /* '<S41>/Delay' */
-  uint8_T icLoad_e;                    /* '<S41>/Delay1' */
+  uint8_T icLoad;                      /* '<S42>/Delay' */
+  uint8_T icLoad_n;                    /* '<S42>/Delay1' */
   boolean_T sum_not_empty;             /* '<S1>/MATLAB Function1' */
 } ul_D_Work;
 
@@ -109,16 +110,32 @@ extern void ul_mode_control_step(void);
  * Block '<S11>/Bitwise Operator' : Unused code path elimination
  * Block '<S38>/Compare' : Unused code path elimination
  * Block '<S38>/Constant' : Unused code path elimination
+ * Block '<S12>/Scope' : Unused code path elimination
+ * Block '<S41>/Add' : Unused code path elimination
  * Block '<S41>/Add1' : Unused code path elimination
  * Block '<S41>/Constant1' : Unused code path elimination
  * Block '<S41>/Constant6' : Unused code path elimination
+ * Block '<S41>/Data Type Conversion' : Unused code path elimination
  * Block '<S41>/Data Type Conversion1' : Unused code path elimination
+ * Block '<S41>/Data Type Conversion2' : Unused code path elimination
+ * Block '<S41>/Delay' : Unused code path elimination
+ * Block '<S41>/Delay1' : Unused code path elimination
  * Block '<S41>/Delay2' : Unused code path elimination
  * Block '<S41>/Display' : Unused code path elimination
  * Block '<S41>/Display1' : Unused code path elimination
+ * Block '<S41>/Product' : Unused code path elimination
+ * Block '<S41>/Product1' : Unused code path elimination
+ * Block '<S41>/Product2' : Unused code path elimination
+ * Block '<S41>/Product3' : Unused code path elimination
  * Block '<S41>/Product4' : Unused code path elimination
  * Block '<S41>/Product5' : Unused code path elimination
- * Block '<S41>/Data Type Conversion2' : Eliminate redundant data type conversion
+ * Block '<S41>/Product6' : Unused code path elimination
+ * Block '<S41>/Product7' : Unused code path elimination
+ * Block '<S42>/Constant1' : Unused code path elimination
+ * Block '<S42>/Constant6' : Unused code path elimination
+ * Block '<S42>/Data Type Conversion2' : Unused code path elimination
+ * Block '<S42>/Display' : Unused code path elimination
+ * Block '<S42>/Product6' : Unused code path elimination
  */
 
 /*-
@@ -180,25 +197,11 @@ extern void ul_mode_control_step(void);
  * '<S39>'  : 'feedback_control/ul_mode_control/getbit5/Bit Shift/bit_shift'
  * '<S40>'  : 'feedback_control/ul_mode_control/pre_freq_reg/lpf_1st_order'
  * '<S41>'  : 'feedback_control/ul_mode_control/pre_freq_reg/lpf_1st_order/Subsystem1'
- * '<S42>'  : 'feedback_control/ul_mode_control/vol-var/vol-var-controller'
- * '<S43>'  : 'feedback_control/ul_mode_control/volt-wat/volt-wat-controller'
- * '<S44>'  : 'feedback_control/ul_mode_control/wat-var/wat-var-controller'
+ * '<S42>'  : 'feedback_control/ul_mode_control/pre_freq_reg/lpf_1st_order/Subsystem2'
+ * '<S43>'  : 'feedback_control/ul_mode_control/vol-var/vol-var-controller'
+ * '<S44>'  : 'feedback_control/ul_mode_control/volt-wat/volt-wat-controller'
+ * '<S45>'  : 'feedback_control/ul_mode_control/wat-var/wat-var-controller'
  */
-
-#include "micro.h"
-typedef struct 
-{
-	volatile micro_set *pMs;
-	ul_ExternalInputs *pRtu;
-	ul_ExternalOutputs *pRty;
-    int16_T pCmd;
-    int16_T qCmd;
-    int16_T freqCmd;
-} ul_mode_opt_t; 
-
-extern ul_mode_opt_t umo;
-extern void ul_mode_task(const void *pdata);
-
 
 #endif                                 /* RTW_HEADER_ul_mode_control_h_ */
 

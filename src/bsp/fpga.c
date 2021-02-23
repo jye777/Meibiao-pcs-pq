@@ -374,7 +374,7 @@ float V2T_GetKelvinTemperature(float voltage)
 
 static void ad_check_err_a(void)
 {
-	float sum,avg;
+	float sum,avg = avg;
 	uint16_t i=0;
 
 	//采样温度排序
@@ -405,7 +405,7 @@ static void ad_check_err_a(void)
 
 static void ad_check_err_b(void)
 {
-	float sum,avg;
+	float sum,avg = avg;
 	uint16_t i=0;
 
 	//采样温度排序
@@ -436,7 +436,7 @@ static void ad_check_err_b(void)
 
 static void ad_check_err_c(void)
 {
-	float sum,avg;
+	float sum,avg = avg;
 	uint16_t i=0;
 
 	//采样温度排序
@@ -1457,19 +1457,19 @@ void fpga_data_refresh_task(const void *pdata)
     pdata = pdata;
     cmd1 = cmd1;
     mb_data.last_onoff_mark = 0;
-	short current_power=0;
-	short Power_Set_AC;
+	short current_power=current_power;
+	short Power_Set_AC = Power_Set_AC;
 
-	short charge_power_limit;
-	short discharge_power_limit;
+	short charge_power_limit = charge_power_limit;
+	short discharge_power_limit = discharge_power_limit;
 	
-	short collect_tick=0;		
-	short copy_tick;
-	short j;	
-	short time_tick;
-	short date_tick;	
-	short date_tick1;
-	unsigned short para_vision;	
+	short collect_tick=collect_tick;		
+	short copy_tick=copy_tick;
+	short j = j;	
+	short time_tick = time_tick;
+	short date_tick = date_tick;	
+	short date_tick1 = date_tick1;
+	unsigned short para_vision = para_vision;	
 	
     while(1)
     {
@@ -2260,7 +2260,7 @@ static void do_fault_record(void)
 /* 开关记录与清除 */
 static void do_switch_record(void)
 {
-    short state9, state10, state11;
+    short state9, state10 = state10, state11;
     unsigned char i;
 
     state9 = fpga_read(STATE9_ADD);
@@ -3057,12 +3057,12 @@ void pcs_handle_task(const void *pdata)
 	short pcs_state;
 	short SwitchCMD1;
 	
-	unsigned short time_ti=0, time_ti1=0,time_ti4=0; 
+	unsigned short time_ti=time_ti, time_ti1=time_ti1,time_ti4=time_ti4; 
 	
-	unsigned short time_ti2=0, time_ti3=0; 
+	unsigned short time_ti2=time_ti2, time_ti3=time_ti3; 
 	//int life_count_tick2=0;
 	//int time_ti2=0;	
-	short off_line_power;
+	short off_line_power = off_line_power;
 	short permit_open_flag;
 	short break_down_flag;
 	short time_open_tick=0;
@@ -3072,15 +3072,15 @@ void pcs_handle_task(const void *pdata)
 	short tm_first_open_flag;
 	short auto_clearn_flag;	
 
-	short Udc_charge_limt;
-	short Udc_discharge_limt;
-	short Idc_charge_limt;
-	short Idc_discharge_limt;
+	short Udc_charge_limt = Udc_charge_limt;
+	short Udc_discharge_limt = Udc_discharge_limt;
+	short Idc_charge_limt = Idc_charge_limt;
+	short Idc_discharge_limt = Idc_discharge_limt;
 
-	short Udc_set;
-	short Ubt_get;
+	short Udc_set = Udc_set;
+	short Ubt_get = Ubt_get;
 
-	short Udc_set1; //电池维护模式下最后设定电压值
+	short Udc_set1 = Udc_set1; //电池维护模式下最后设定电压值
 
 	short max_temp;
 //	short min_temp;

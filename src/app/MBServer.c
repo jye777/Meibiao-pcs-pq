@@ -36,7 +36,7 @@
 #include "soft_bootup.h"
 #include "fault_rec.h"
 #include "comm_offline.h"
-#include "ul_mode_control.h"
+#include "ul_mode.h"
 
 _mbser_inf mbser_inf[MAX_CONN_NUM];
 _update_inf update_inf;
@@ -430,36 +430,22 @@ unsigned char mb_writereg(unsigned short saddr, unsigned short value, short *rt)
 			{
 				//tty_printf("upper write setting reg, saddr = %d, value = %d\n", saddr, value);
 				setpara(saddr, value);
-				if((saddr != Addr_Param26) && (saddr != Addr_Param27) && (saddr != Addr_Param54)) 
+				if((saddr != Addr_Param26) && (saddr != Addr_Param27)) 
 				{
 					fpga_write(saddr, value);
 					fpga_pdatabuf_write(saddr, value);
 				} 
 				else if(saddr == Addr_Param26) 
 				{
-					if(svg_info.svg_en == 0) 
-					{
-						fpga_write(saddr, value);
-						fpga_pdatabuf_write(saddr, value);
-					}
-					PQNonSVG.p=getting_data_handle(saddr, value);
+                    fpga_write(saddr, value);
+				    fpga_pdatabuf_write(saddr, value);
                     umo.pCmd = value;
 				} 
 				else if(saddr == Addr_Param27) 
 				{
-					if(svg_info.svg_en == 0) 
-					{
-						fpga_write(saddr, value);
-						fpga_pdatabuf_write(saddr, value);
-					}
-					PQNonSVG.q=getting_data_handle(saddr, value);
-                    umo.qCmd = value;
-				}
-                else if(saddr == Addr_Param54) 
-				{
 					fpga_write(saddr, value);
 					fpga_pdatabuf_write(saddr, value);
-                    umo.freqCmd = value;
+                    umo.qCmd = value;
 				}
 				*rt = value;
 				return 0;
@@ -2946,7 +2932,7 @@ static int mbhandle(_mbser_inf *mbsinf, unsigned char *rbuf,
 {
     unsigned short len;
     int resplen = 0;
-	short state8;
+	short state8 = state8;
 	
     resp[0] = rbuf[0];
     resp[1] = rbuf[1];
